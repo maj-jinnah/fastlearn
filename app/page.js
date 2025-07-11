@@ -1,9 +1,12 @@
-import Image from "next/image";
+import { getCourses } from "@/queries/courses";
 
-export default function Home() {
+
+export default async function Home() {
+  const courses = await getCourses();
+  console.log(courses);
   return (
-    <h1>
-      hello world
-    </h1>
+    <button >
+      click me
+    </button>
   );
 }
