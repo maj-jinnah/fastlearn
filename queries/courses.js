@@ -4,8 +4,9 @@ import { Module } from "@/model/module.model";
 import { Testimonial } from "@/model/testimonial-model";
 import { User } from "@/model/user-model";
 
-export async function getCourses() {
+export async function getCourseList() {
     const courses = await Course.find({})
+        .select('title description thumbnail price active category instructor modules testimonials')
         .populate({
             path: 'category',
             select: 'title description thumbnail -_id',
@@ -25,7 +26,7 @@ export async function getCourses() {
             path: 'testimonials',
             select: 'content user courseId rating -_id',
             model: Testimonial,
-        });
+        }).lean();
         
     return courses;
 }
