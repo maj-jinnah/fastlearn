@@ -8,21 +8,22 @@ import Testimonials from "./_components/Testimonials";
 const SingleCoursePage = async ({ params }) => {
 
     const { id } = await params;
-
     const course = await getCourseDetailsById(id);
 
-    console.log("Course Details: --- ", course);
+    // console.log("Course Details: --- ", course);
 
     return (
         <>
-            <CourseDetailsIntro />
+            <CourseDetailsIntro
+                title={course?.title}
+                thumbnail={course?.thumbnail}
+                subtitle={course?.subtitle}
+            />
 
-            <CourseDetails />
+            <CourseDetails course={course} />
 
-            {/* Testimonials */}
-            <Testimonials />
+            {course?.testimonials && <Testimonials testimonials={course?.testimonials} />}
 
-            {/* Releated Course */}
             <RelatedCourses />
         </>
     );

@@ -7,7 +7,8 @@ const testimonialSchema = new Schema({
     },
     user: {
         required: true,
-        type: String,
+        type: Schema.ObjectId,
+        ref: "User",
     },
     courseId: {
         required: true,

@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { trim } from "zod";
 
 const userSchema = new Schema({
     firstName: {
@@ -17,8 +16,6 @@ const userSchema = new Schema({
     email: {
         required: true,
         type: String,
-        unique: true,
-        trim: true,
     },
     phone: {
         required: true,
@@ -40,6 +37,10 @@ const userSchema = new Schema({
         required: false,
         type: String,
     },
+    designation: {
+        required: false,
+        type: String,
+    }
 });
 
 export const User = mongoose.models.User ?? mongoose.model("User", userSchema);
