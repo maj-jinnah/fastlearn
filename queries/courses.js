@@ -83,12 +83,12 @@ export async function getCourseDetailsByInstructor(instructorId) {
 
     const flattenedTestimonials = testimonials.flat();
 
-    const avgRating = flattenedTestimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / flattenedTestimonials.length || 0;
+    const avgRating = flattenedTestimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / flattenedTestimonials.length ;
 
     return {
         'courses': courses.length,
         'enrollments': total,
-        'totalTestimonials': flattenedTestimonials.length,
+        'totalReviews': flattenedTestimonials.length,
         'averageRating': avgRating.toFixed(1),
     };
 }

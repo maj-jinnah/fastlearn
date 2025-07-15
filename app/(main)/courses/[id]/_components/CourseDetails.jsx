@@ -109,7 +109,7 @@ const CourseDetails = ({ course }) => {
                         </TabsContent>
 
                         <TabsContent value="curriculum">
-                            <CourseCurriculum />
+                            <CourseCurriculum course={course} />
                         </TabsContent>
 
                         <TabsContent value="instructor">

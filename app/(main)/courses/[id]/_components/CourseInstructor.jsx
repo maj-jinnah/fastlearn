@@ -2,16 +2,12 @@ import { getCourseDetailsByInstructor } from "@/queries/courses";
 import { MessageSquare, Presentation, Star, UsersRound } from "lucide-react";
 import Image from "next/image";
 
-const CourseInstructor = async({instructor}) => {
-
-    // console.log(instructor)
-    const {courses, enrollments, totalTestimonials, averageRating} = await getCourseDetailsByInstructor(instructor?._id);
-
-    // console.log("Courses by Instructor: ", courseDetailsByInstructor);
+const CourseInstructor = async ({ instructor }) => {
+    const { courses, enrollments, totalReviews, averageRating } =
+        await getCourseDetailsByInstructor(instructor?._id);
 
     return (
         <>
-            {/* each tab content can be independent component */}
             <div className="bg-gray-50 rounded-md p-8">
                 <div className="md:flex md:gap-x-5 mb-8">
                     <div className="h-[310px] w-[270px] max-w-full  flex-none rounded mb-5 md:mb-0">
@@ -42,7 +38,7 @@ const CourseInstructor = async({instructor}) => {
                                 </li>
                                 <li className="flex space-x-3">
                                     <MessageSquare className="text-gray-600" />
-                                    <div>{totalTestimonials} Reviews</div>
+                                    <div>{totalReviews} Reviews</div>
                                 </li>
                                 <li className="flex space-x-3">
                                     <Star className="text-gray-600" />
@@ -52,9 +48,7 @@ const CourseInstructor = async({instructor}) => {
                         </div>
                     </div>
                 </div>
-                <p className="text-gray-600">
-                    {instructor?.bio}
-                </p>
+                <p className="text-gray-600">{instructor?.bio}</p>
             </div>
         </>
     );
