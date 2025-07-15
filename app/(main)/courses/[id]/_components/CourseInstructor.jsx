@@ -1,7 +1,14 @@
+import { getCourseDetailsByInstructor } from "@/queries/courses";
 import { MessageSquare, Presentation, Star, UsersRound } from "lucide-react";
 import Image from "next/image";
 
-const CourseInstructor = ({instructor}) => {
+const CourseInstructor = async({instructor}) => {
+
+    // console.log(instructor)
+    const {courses, enrollments, totalTestimonials, averageRating} = await getCourseDetailsByInstructor(instructor?._id);
+
+    // console.log("Courses by Instructor: ", courseDetailsByInstructor);
+
     return (
         <>
             {/* each tab content can be independent component */}
@@ -27,19 +34,19 @@ const CourseInstructor = ({instructor}) => {
                             <ul className="list space-y-4">
                                 <li className="flex items-center space-x-3">
                                     <Presentation className="text-gray-600" />
-                                    <div>10+ Courses</div>
+                                    <div>{courses} Courses</div>
                                 </li>
                                 <li className="flex space-x-3">
                                     <UsersRound className="text-gray-600" />
-                                    <div>2k+ Student Learned</div>
+                                    <div>{enrollments} Student Learned</div>
                                 </li>
                                 <li className="flex space-x-3">
                                     <MessageSquare className="text-gray-600" />
-                                    <div>1500+ Reviews</div>
+                                    <div>{totalTestimonials} Reviews</div>
                                 </li>
                                 <li className="flex space-x-3">
                                     <Star className="text-gray-600" />
-                                    <div>4.9 Average Rating</div>
+                                    <div>{averageRating} Average Rating</div>
                                 </li>
                             </ul>
                         </div>

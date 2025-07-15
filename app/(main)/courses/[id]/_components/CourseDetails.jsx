@@ -49,7 +49,7 @@ const courses = [
 ];
 
 const CourseDetails = ({ course }) => {
-    console.log("Course Details: --- ", course);
+    // console.log("Course Details: --- ", course);
 
     const formattedDate = new Date(course?.modifiedOn).toLocaleDateString(
         "en-US",

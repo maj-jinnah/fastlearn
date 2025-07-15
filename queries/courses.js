@@ -3,6 +3,8 @@ import { Course } from "@/model/course-model";
 import { Module } from "@/model/module.model";
 import { Testimonial } from "@/model/testimonial-model";
 import { User } from "@/model/user-model";
+import { getEnrollmentsForCourse } from "./enrollments";
+import { getTestimonialsForCourse } from "./testimonials";
 
 export async function getCourseList() {
     const courses = await Course.find({})
@@ -58,4 +60,35 @@ export async function getCourseDetailsById(id) {
         .lean();
 
     return course;
+}
+
+export async function getCourseDetailsByInstructor(instructorId) {
+    const courses = await Course.find({ instructor: instructorId }).lean();
+
+    const enrollments = await Promise.all(
+        courses.map(async (course) => {
+            const list = await getEnrollmentsForCourse(course._id.toString());
+            return list.length;
+        })
+    );
+
+    const total = enrollments.reduce((sum, n) => sum + n, 0);
+
+    const testimonials = await Promise.all(
+        courses.map(async (course) => {
+            const list = await getTestimonialsForCourse(course._id.toString());
+            return list;
+        })
+    );
+
+    const flattenedTestimonials = testimonials.flat();
+
+    const avgRating = flattenedTestimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / flattenedTestimonials.length || 0;
+
+    return {
+        'courses': courses.length,
+        'enrollments': total,
+        'totalTestimonials': flattenedTestimonials.length,
+        'averageRating': avgRating.toFixed(1),
+    };
 }
