@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { credentialsLogin } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -15,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { credentialsLogin } from "@/app/actions";
 
 export function LoginForm() {
     const router = useRouter();
@@ -25,8 +25,6 @@ export function LoginForm() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
-        //   console.log(formData)
-
         try {
             const response = await credentialsLogin(formData);
 
@@ -34,11 +32,14 @@ export function LoginForm() {
                 toast.error(response.error);
             } else {
                 toast.success("Login successful");
-                router.push("/");
+                router.push("/courses");
             }
         } catch (error) {
-            console.log(error);
-            // toast.error("An error occurred during login. Please try again.");
+            // console.log(error);
+            toast.error(
+                error.message ||
+                    "An error occurred during login. Please try again."
+            );
         }
     };
 
@@ -84,9 +85,15 @@ export function LoginForm() {
                 </form>
                 <div className="mt-4 text-center text-sm">
                     Don&apos;t have an account?{" "}
-                    <Link href="register" className="underline">
-                        Register
-                    </Link>
+                    <p>
+                        Register as a{" "}
+                        <Link href="/register/instructor" className="underline">
+                            Instructor
+                        </Link> or {' '} 
+                        <Link href="/register/student" className="underline">
+                            Student
+                        </Link>
+                    </p>
                 </div>
             </CardContent>
         </Card>
