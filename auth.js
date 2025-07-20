@@ -3,12 +3,11 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { User } from "./model/user-model"
 import { dbConnection } from "./service/dbConnection"
+import { authConfig } from "./auth.config"
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    session: {
-        strategy: "jwt",
-    },
+    ...authConfig, 
     providers: [
         Credentials({
             async authorize(credentials) {
