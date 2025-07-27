@@ -112,7 +112,7 @@ const RelatedCourses = () => {
 
                                             <div className="flex items-center justify-between mt-4">
                                                 <p className="text-md md:text-sm font-medium text-slate-700">
-                                                    {formatPrice(49)}
+                                                    {formatPrice(`${course?.price || 29.99}`)}
                                                 </p>
 
                                                 <Button

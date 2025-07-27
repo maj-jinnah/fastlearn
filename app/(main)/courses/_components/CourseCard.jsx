@@ -1,4 +1,5 @@
 import { CourseProgress } from "@/components/course-progress";
+import { EnrollCourse } from "@/components/enroll-course";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/formatPrice";
 import { ArrowRight, BookOpen } from "lucide-react";
@@ -39,16 +40,10 @@ const CourseCard = ({ course }) => {
 
                     <div className="flex items-center justify-between mt-4">
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            {formatPrice(49)}
+                            {formatPrice(course?.price)}
                         </p>
 
-                        <Button
-                            variant="ghost"
-                            className="text-xs text-sky-700 h-7 gap-1"
-                        >
-                            Enroll
-                            <ArrowRight className="w-3" />
-                        </Button>
+                        <EnrollCourse asLink={true} />
                     </div>
                 </div>
             </div>
