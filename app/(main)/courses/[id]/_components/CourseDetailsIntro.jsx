@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
-const CourseDetailsIntro = ({ title, thumbnail, subtitle }) => {
+const CourseDetailsIntro = ({ course }) => {
+    const { title, thumbnail, subtitle } = course;
     return (
         <div className="overflow-x-hidden  grainy">
             <section className="pt-12  sm:pt-16">
@@ -17,14 +18,22 @@ const CourseDetailsIntro = ({ title, thumbnail, subtitle }) => {
                             <p className="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:leading-tight sm:text-5xl lg:text-6xl lg:leading-tight font-pj">
                                 <span className="relative inline-flex sm:inline">
                                     <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
-                                    <span className="relative">
-                                        {title}
-                                    </span>
+                                    <span className="relative">{title}</span>
                                 </span>
                             </p>
 
                             <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                                <EnrollCourse asLink={false} />
+                                <EnrollCourse
+                                    // course={{
+                                    //     ...course,
+                                    //     _id: course._id.toString(),
+                                    // }}
+                                    courseId={course._id.toString()}
+                                    courseTitle={course.title}
+                                    coursePrice={course.price}
+                                    description={course.description}
+                                    asLink={false}
+                                />
                                 <Link
                                     href=""
                                     className={cn(

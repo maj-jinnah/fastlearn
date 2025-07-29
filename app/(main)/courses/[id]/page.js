@@ -15,16 +15,14 @@ const SingleCoursePage = async ({ params }) => {
     return (
         <>
             <CourseDetailsIntro
-                title={course?.title}
-                thumbnail={course?.thumbnail}
-                subtitle={course?.subtitle}
+                course={course}
             />
 
             <CourseDetails course={course} />
 
             {course?.testimonials && <Testimonials testimonials={course?.testimonials} />}
 
-            <RelatedCourses />
+            {/* <RelatedCourses /> */}
         </>
     );
 };

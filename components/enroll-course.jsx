@@ -5,15 +5,21 @@ import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 
-export const EnrollCourse = ({ asLink }) => {
+export const EnrollCourse = ({ asLink, courseId, courseTitle, coursePrice, description }) => {
     const formAction = async (data) => {
         const {url} = await createCheckoutSession(data);
         window.location.assign(url);
     };
 
+    // const courseId = course?._id;
+
     return (
         <>
             <form action={formAction}>
+                <input type="hidden" name="courseId" value={courseId} />
+                <input type="hidden" name="courseTitle" value={courseTitle} />
+                <input type="hidden" name="coursePrice" value={coursePrice} />
+                <input type="hidden" name="description" value={description} />
                 {asLink ? (
                     <Button
                         type="submit"
