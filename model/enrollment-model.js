@@ -12,7 +12,6 @@ const enrollmentSchema = new Schema({
     },
 
     completion_date: {
-        required: true,
         type: Date
     },
 

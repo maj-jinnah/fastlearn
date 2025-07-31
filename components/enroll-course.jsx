@@ -6,12 +6,11 @@ import { ArrowRight } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 
 export const EnrollCourse = ({ asLink, courseId, courseTitle, coursePrice, description }) => {
+    
     const formAction = async (data) => {
         const {url} = await createCheckoutSession(data);
         window.location.assign(url);
     };
-
-    // const courseId = course?._id;
 
     return (
         <>
