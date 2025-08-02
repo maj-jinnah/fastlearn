@@ -49,15 +49,15 @@ const Success = async ({ searchParams }) => {
                 to: customerEmail,
                 subject: `Enrollment Successful for ${courseName}`,
                 courseName: courseName,
-                customerName: customerName,
-                message: `Hi ${loggedInUser?.firstName},\n\nCongratulations! You have successfully enrolled in the course "${courseName}".\n\nIf you have any questions, feel free to reach out to our support team. We're here to help!\n\nBest regards,\nThe FastLearn Team`,
+                name: customerName,
+                message: `Hi ${loggedInUser?.firstName},\n\nCongratulations! You have successfully enrolled in the course "${courseName}". \n\nThank you for choosing our platform, and we hope you enjoy your learning experience!`,
             },
             {
                 to: course?.instructor?.email,
                 subject: `New Enrollment for ${courseName}`,
                 courseName: courseName,
-                customerName: `${course?.instructor?.firstName} ${course?.instructor?.lastName}`,
-                message: `Hi ${course?.instructor?.firstName},\n\nYou have a new student enrolled in your course "${courseName}".\n\nStudent Name: ${customerName}\nStudent Email: ${customerEmail}\n\nIf you have any questions, feel free to reach out to our support team. We're here to help!\n\nBest regards,\nThe FastLearn Team`,
+                name: `${course?.instructor?.firstName} ${course?.instructor?.lastName}`,
+                message: `Hi ${course?.instructor?.firstName},\n\nYou have a new student enrolled in your course "${courseName}".\n\nStudent Name: ${customerName}\nStudent Email: ${customerEmail}\n\nThank you for being a part of our platform!`,
             }
         ]
 

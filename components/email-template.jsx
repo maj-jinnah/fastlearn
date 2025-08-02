@@ -1,10 +1,10 @@
 export default function EmailTemplate({
-  firstName = "there",
-  title = "Welcome to our platform!",
+  name = "there",
+  subject = "Welcome to our platform!",
   message = "Thank you for joining us. We're excited to have you on board and look forward to providing you with an amazing experience.",
-  buttonText = "Get Started",
-  buttonUrl = "https://example.com",
-  companyName = "Your Company",
+  // buttonText = "Get Started",
+  // buttonUrl = "https://example.com",
+  companyName = "FastLearn",
   companyLogo = "/placeholder.svg?height=40&width=120&text=Logo",
 }) {
   return (
@@ -12,7 +12,7 @@ export default function EmailTemplate({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{title}</title>
+        <title>{subject}</title>
       </head>
       <body style={main}>
         <div style={container}>
@@ -23,19 +23,19 @@ export default function EmailTemplate({
 
           {/* Main Content */}
           <div style={content}>
-            <h1 style={h1}>Hi {firstName}!</h1>
+            {/* <h1 style={h1}>Hi {name}!</h1> */}
 
-            <h2 style={h2}>{title}</h2>
+            <h2 style={h2}>{subject}</h2>
 
             <p style={text}>{message}</p>
 
-            {buttonText && buttonUrl && (
+            {/* {buttonText && buttonUrl && (
               <div style={buttonContainer}>
                 <a href={buttonUrl} style={button}>
                   {buttonText}
                 </a>
               </div>
-            )}
+            )} */}
 
             <p style={text}>
               If you have any questions, feel free to reach out to our support team. We're here to help!
@@ -52,7 +52,7 @@ export default function EmailTemplate({
 
           {/* Footer */}
           <div style={footer}>
-            <p style={footerText}>© 2024 {companyName}. All rights reserved.</p>
+            <p style={footerText}>© 2025 {companyName}. All rights reserved.</p>
 
             <p style={footerText}>
               <a href="#" style={footerLink}>
@@ -69,9 +69,7 @@ export default function EmailTemplate({
             </p>
 
             <p style={footerText}>
-              123 Business Street, Suite 100
-              <br />
-              City, State 12345
+              Kushtia, Bangladesh
             </p>
           </div>
         </div>
@@ -112,7 +110,7 @@ const content = {
 
 const h1 = {
   color: "#1f2937",
-  fontSize: "24px",
+  fontSize: "22px",
   fontWeight: "600",
   lineHeight: "1.25",
   margin: "16px 0",
@@ -134,7 +132,7 @@ const text = {
 }
 
 const buttonContainer = {
-  textAlign: "center" as const,
+  textAlign: "center",
   margin: "32px 0",
 }
 
@@ -145,7 +143,7 @@ const button = {
   fontSize: "16px",
   fontWeight: "600",
   textDecoration: "none",
-  textAlign: "center" as const,
+  textAlign: "center",
   display: "inline-block",
   padding: "12px 24px",
   border: "none",
@@ -168,7 +166,7 @@ const footerText = {
   fontSize: "14px",
   lineHeight: "1.5",
   margin: "8px 0",
-  textAlign: "center" as const,
+  textAlign: "center",
 }
 
 const footerLink = {

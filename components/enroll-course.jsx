@@ -16,9 +16,6 @@ export const EnrollCourse = ({ asLink, courseId, courseTitle, coursePrice, descr
         <>
             <form action={formAction}>
                 <input type="hidden" name="courseId" value={courseId} />
-                <input type="hidden" name="courseTitle" value={courseTitle} />
-                <input type="hidden" name="coursePrice" value={coursePrice} />
-                <input type="hidden" name="description" value={description} />
                 {asLink ? (
                     <Button
                         type="submit"

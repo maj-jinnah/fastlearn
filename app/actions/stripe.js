@@ -3,6 +3,7 @@
 import { formatAmountForStripe } from '@/lib/stripe-helpers';
 import { headers } from 'next/headers';
 import { stripe } from '../../lib/stripe';
+import { getCourseDetailsById } from '@/queries/courses';
 
 const CURRENCY = 'bdt';
 
@@ -10,6 +11,12 @@ export async function createCheckoutSession(data) {
     const ui_mode = 'hosted';
     const headersList = await headers();
     const origin = headersList.get('origin');
+
+    const course = await getCourseDetailsById(data.get('courseId'));
+    if(!course) {
+        return new Error('Course not found');
+    }
+    const {price, title, description} = course;
 
     const checkoutSession = await stripe.checkout.sessions.create({
         mode: 'payment',
@@ -20,11 +27,11 @@ export async function createCheckoutSession(data) {
                 price_data: {
                     currency: CURRENCY,
                     product_data: {
-                        name: data.get('courseTitle'),
-                        description: data.get('description'),
+                        name: title,
+                        description: description,
                         // images: [data.image] ,
                     },
-                    unit_amount: formatAmountForStripe(data.get('coursePrice'), CURRENCY),
+                    unit_amount: formatAmountForStripe(price, CURRENCY),
 
                 }
             },
