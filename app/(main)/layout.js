@@ -32,7 +32,7 @@ const MainLayout = ({ children }) => {
           </div>
         </SessionProvider>
       </header>
-      <main className="flex-1 pt-20 flex flex-col items-center">{children}</main>
+      <main className="flex-1 pt-20 flex flex-col mx-auto">{children}</main>
       <SiteFooter />
     </div>
   );
