@@ -20,12 +20,10 @@ import {
 
 export function MainNav({ items, children }) {
     const { data: session } = useSession();
-    // console.log("Session Data:", data);
     const [loginSession, setLoginSession] = useState(null);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     useEffect(() => {
-        console.log("Session Data: ", session);
         setLoginSession(session);
     }, [session]);
 
