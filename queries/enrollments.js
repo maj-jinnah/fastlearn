@@ -1,8 +1,20 @@
+import { Course } from "@/model/course-model";
 import { Enrollment } from "@/model/enrollment-model";
 
 export async function getEnrollmentsForCourse(courseId) {
     const enrollments = await Enrollment.find({ course: courseId })
         .lean();
+
+    return enrollments;
+}
+
+export async function getEnrollmentsForUser(userId) {
+    const enrollments = await Enrollment.find({ student: userId })
+    .populate({
+        path: 'course',
+        model: Course,
+    })
+    .lean();
 
     return enrollments;
 }
@@ -22,3 +34,4 @@ export async function courseEnroll(courseId, userId, paymentMethod) {
         throw new Error("Failed to enroll in course");
     }
 }
+

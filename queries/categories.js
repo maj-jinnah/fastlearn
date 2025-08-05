@@ -7,3 +7,10 @@ export async function getCategories() {
 
     return categories;
 }
+
+export async function getCategoryById(categoryId) {
+    const category = await Category.findById(categoryId)
+        .lean();
+
+    return category;
+}
