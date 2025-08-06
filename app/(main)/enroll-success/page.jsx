@@ -62,7 +62,7 @@ const Success = async ({ searchParams }) => {
         ]
 
         const emailSendResponse = await sendEmails(emailsToSend);
-        console.log("Email send response:", emailSendResponse);
+        // console.log("Email send response:", emailSendResponse);
         
     }
 

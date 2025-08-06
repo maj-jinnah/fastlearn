@@ -1,11 +1,27 @@
+import { auth } from "@/auth";
 import { EnrollCourse } from "@/components/enroll-course";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { hasEnrollForCourse } from "@/queries/enrollments";
+import { getUserByEmail } from "@/queries/user";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-const CourseDetailsIntro = ({ course }) => {
+const CourseDetailsIntro = async ({ course }) => {
     const { title, thumbnail, subtitle } = course;
+    const session = await auth();
+    if (!session) {
+        redirect("/login");
+    }
+
+    const loggedInUser = await getUserByEmail(session?.user?.email);
+
+    const isEnrolled = await hasEnrollForCourse(
+        loggedInUser?._id.toString(),
+        course._id.toString()
+    );
+
     return (
         <div className="overflow-x-hidden  grainy">
             <section className="pt-12  sm:pt-16">
@@ -23,17 +39,27 @@ const CourseDetailsIntro = ({ course }) => {
                             </p>
 
                             <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                                <EnrollCourse
-                                    // course={{
-                                    //     ...course,
-                                    //     _id: course._id.toString(),
-                                    // }}
-                                    courseId={course._id.toString()}
-                                    courseTitle={course.title}
-                                    coursePrice={course.price}
-                                    description={course.description}
-                                    asLink={false}
-                                />
+                                {isEnrolled ? (
+                                    <Link
+                                        href=""
+                                        className={cn(
+                                            buttonVariants({
+                                                size: "lg",
+                                            })
+                                        )}
+                                    >
+                                        Access Course
+                                    </Link>
+                                ) : (
+                                    <EnrollCourse
+                                        courseId={course._id.toString()}
+                                        courseTitle={course.title}
+                                        coursePrice={course.price}
+                                        description={course.description}
+                                        asLink={false}
+                                    />
+                                )}
+
                                 <Link
                                     href=""
                                     className={cn(

@@ -17,7 +17,7 @@ export function MobileNav({ items, children }) {
     const [loginSession, setLoginSession] = useState(null);
 
     useEffect(() => {
-        console.log("Session Data: ", session);
+        // console.log("Session Data: ", session);
         setLoginSession(session);
     }, [session]);
 

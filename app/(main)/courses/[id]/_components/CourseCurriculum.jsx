@@ -12,7 +12,7 @@ const CourseCurriculum = ({ course }) => {
     return (
         <>
             {/* each tab content can be independent component */}
-            <div className="flex gap-x-5 items-center justify-center flex-wrap mt-4 mb-6 text-gray-600 text-sm">
+            <div className="w-full flex gap-x-5 items-center justify-center flex-wrap mt-4 mb-6 text-gray-600 text-sm">
                 <span className="flex items-center gap-1.5">
                     <BookCheck className="w-4 h-4" />
                     {course?.modules?.length} Chapters

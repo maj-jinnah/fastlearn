@@ -11,8 +11,6 @@ export async function getAReport(filter){
         })
         .lean();
 
-        console.log('Fetched Report:', report);
-
         return report
     } catch (error) {
         throw new Error(error)

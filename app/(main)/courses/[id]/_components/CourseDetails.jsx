@@ -3,6 +3,7 @@ import Image from "next/image";
 import CourseCurriculum from "./CourseCurriculum";
 import CourseInstructor from "./CourseInstructor";
 import CourseOverview from "./CourseOverview";
+import Link from "next/link";
 
 const courses = [
     {
@@ -50,6 +51,7 @@ const courses = [
 
 const CourseDetails = ({ course }) => {
     // console.log("Course Details: --- ", course);
+    console.log("ins : ", course?.instructor?._id.toString());
 
     const formattedDate = new Date(course?.modifiedOn).toLocaleDateString(
         "en-US",
@@ -61,7 +63,7 @@ const CourseDetails = ({ course }) => {
     );
 
     return (
-        <section className="py-8 md:py-12 lg:py-24">
+        <section className="py-8 md:py-12 lg:py-24 lg:w-[1000px] mx-auto">
             <div className="container">
                 <span className="bg-emerald-500 px-4 py-0.5 rounded-full text-xs font-medium text-white inline-block">
                     {course?.category?.title}
@@ -78,9 +80,13 @@ const CourseDetails = ({ course }) => {
                             height={40}
                             className="w-[40px] h-[40px] rounded-full"
                             src={course?.instructor?.profilePicture}
-                            alt="sumit saha"
+                            alt={course?.instructor?.firstName}
                         />
-                        <p className="font-bold">{`${course?.instructor?.firstName} ${course?.instructor?.lastName}`}</p>
+                        <Link
+                            href={`/inst-profile/${course?.instructor?._id.toString()}`}
+                        >
+                            <p className="font-bold">{`${course?.instructor?.firstName} ${course?.instructor?.lastName}`}</p>
+                        </Link>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                         <span className="text-success font-semibold">
@@ -105,7 +111,10 @@ const CourseDetails = ({ course }) => {
                         </TabsList>
 
                         <TabsContent value="overview">
-                            <CourseOverview description={course?.description} learning={course?.learning} />
+                            <CourseOverview
+                                description={course?.description}
+                                learning={course?.learning}
+                            />
                         </TabsContent>
 
                         <TabsContent value="curriculum">

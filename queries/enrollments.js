@@ -10,13 +10,26 @@ export async function getEnrollmentsForCourse(courseId) {
 
 export async function getEnrollmentsForUser(userId) {
     const enrollments = await Enrollment.find({ student: userId })
-    .populate({
-        path: 'course',
-        model: Course,
-    })
-    .lean();
+        .populate({
+            path: 'course',
+            model: Course,
+        })
+        .lean();
 
     return enrollments;
+}
+
+export async function hasEnrollForCourse(userId, courseId) {
+
+    const enrollment = await Enrollment.findOne({
+        student: userId,
+        course: courseId,
+    });
+    
+    if (!enrollment) {
+        return false;
+    }
+    return true;
 }
 
 export async function courseEnroll(courseId, userId, paymentMethod) {

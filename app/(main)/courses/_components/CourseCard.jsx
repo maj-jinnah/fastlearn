@@ -1,18 +1,32 @@
+import { auth } from "@/auth";
 import { CourseProgress } from "@/components/course-progress";
 import { EnrollCourse } from "@/components/enroll-course";
+import { buttonVariants } from "@/components/ui/button";
 import { formatPrice } from "@/lib/formatPrice";
-import { BookOpen } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { hasEnrollForCourse } from "@/queries/enrollments";
+import { getUserByEmail } from "@/queries/user";
+import { ArrowRight, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const CourseCard = ({ course }) => {
+const CourseCard = async ({ course }) => {
+    console.log("course: - ", course);
+
+    const session = await auth();
+    const loggedInUser = await getUserByEmail(session?.user?.email);
+    const isEnrolled = await hasEnrollForCourse(
+        loggedInUser?._id.toString(),
+        course._id.toString()
+    );
+
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
             <Link href={`/courses/${course._id}`}>
                 <div className="">
                     <div className="relative w-full aspect-video rounded-md overflow-hidden">
                         <Image
-                            src="/assets/images/courses/course_1.png"
+                            src={`/assets/images/courses/${course?.thumbnail}`}
                             alt={"course"}
                             className="object-cover"
                             fill
@@ -20,17 +34,17 @@ const CourseCard = ({ course }) => {
                     </div>
                     <div className="flex flex-col pt-2">
                         <div className="text-lg md:text-base font-medium group-hover:text-sky-700 line-clamp-2">
-                            Reactive Accelerator
+                            {course?.title}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Development
+                            {course?.category?.title}
                         </p>
                         <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
                             <div className="flex items-center gap-x-1 text-slate-500">
                                 <div>
                                     <BookOpen className="w-4" />
                                 </div>
-                                <span>4 Chapters</span>
+                                <span>{course?.modules.length} Chapters</span>
                             </div>
                         </div>
 
@@ -43,17 +57,41 @@ const CourseCard = ({ course }) => {
                 </div>
             </Link>
             <div className="flex items-center justify-between mt-4">
-                <p className="text-md md:text-sm font-medium text-slate-700">
-                    {formatPrice(course?.price)}
-                </p>
-                <EnrollCourse
-                    // course={{ ...course, _id: course._id.toString() }}
-                    courseId={course._id.toString()}
-                    courseTitle={course.title}
-                    coursePrice={course.price}
-                    description={course.description}
-                    asLink={true}
-                />
+                {!isEnrolled && (
+                    <p className="text-md md:text-sm font-medium text-slate-700">
+                        {formatPrice(course?.price)}
+                    </p>
+                )}
+
+                {isEnrolled ? (
+                    <Link
+                        href=""
+                        className={cn(
+                            buttonVariants({
+                                size: "sm",
+                            })
+                        )}
+                    >
+                        {/* <Button
+                            type="submit"
+                            variant="ghost"
+                            className="text-xs text-sky-700 h-7 gap-1"
+                        >
+                            Access Course
+                            <ArrowRight className="w-3" />
+                        </Button> */}
+                        Access Course
+                        <ArrowRight className="w-3" />
+                    </Link>
+                ) : (
+                    <EnrollCourse
+                        courseId={course._id.toString()}
+                        courseTitle={course.title}
+                        coursePrice={course.price}
+                        description={course.description}
+                        asLink={true}
+                    />
+                )}
             </div>
         </div>
     );

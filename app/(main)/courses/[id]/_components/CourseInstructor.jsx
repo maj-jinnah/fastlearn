@@ -1,14 +1,17 @@
 import { getCourseDetailsByInstructor } from "@/queries/courses";
 import { MessageSquare, Presentation, Star, UsersRound } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const CourseInstructor = async ({ instructor }) => {
     const { courses, enrollments, totalReviews, averageRating } =
         await getCourseDetailsByInstructor(instructor?._id);
 
+        // console.log()
+
     return (
         <>
-            <div className="bg-gray-50 rounded-md p-8">
+            <div className="bg-gray-50 rounded-md p-8 w-full">
                 <div className="md:flex md:gap-x-5 mb-8">
                     <div className="h-[310px] w-[270px] max-w-full  flex-none rounded mb-5 md:mb-0">
                         <Image
@@ -21,9 +24,12 @@ const CourseInstructor = async ({ instructor }) => {
                     </div>
                     <div className="flex-1">
                         <div className="max-w-[300px]">
-                            <h4 className="text-[34px] font-bold leading-[51px]">
-                                {instructor?.firstName} {instructor?.lastName}
-                            </h4>
+                            <Link href={`/inst-profile/${instructor?._id.toString()}`}>
+                                <h4 className="text-[34px] font-bold leading-[51px]">
+                                    {instructor?.firstName}{" "}
+                                    {instructor?.lastName}
+                                </h4>
+                            </Link>
                             <div className="text-gray-600 font-medium mb-6">
                                 {instructor?.designation}
                             </div>

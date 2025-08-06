@@ -15,13 +15,20 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
         student: loggedInUser?._id.toString(),
     });
 
-    console.log('report', report);
+    const totalCompletedModules = report?.totalCompletedModules?.length;
+    // const totalCompletedLessons = report?.totalCompletedLessons?.length;
 
-    const totalCompletedModules = report?.totalCompletedModules?.length || 0;
-    const totalCompletedLessons = report?.totalCompletedLessons?.length || 0
+    const quizAssessments = report?.quizAssessment?.assessments;
+    const quizTaken = quizAssessments.filter(assessment=> assessment?.attempted);
 
-    console.log('total completed modules', totalCompletedModules);
-    console.log('total completed lessons', totalCompletedLessons);
+    const correctQuizzes = quizTaken.map(quiz =>{
+        return (
+            quiz?.options.filter(q => q.isCorrect === true && q.isSelected === true)
+        )
+    }).flat();
+
+    const quizMarks = correctQuizzes.length * 5;
+    const totalMarks = quizMarks + report?.quizAssessment?.otherMarks;
 
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
@@ -58,11 +65,11 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            Total Quizzes: 10
+                            Total Quizzes: {quizAssessments.length}
                         </p>
 
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            Quiz taken <Badge variant="success">10</Badge>
+                            Quiz taken <Badge variant="success">{quizTaken.length}</Badge>
                         </p>
                     </div>
                     <div className="flex items-center justify-between mt-2">
@@ -71,7 +78,7 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                         </p>
 
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            50
+                            {quizMarks}
                         </p>
                     </div>
                     <div className="flex items-center justify-between mt-2">
@@ -80,7 +87,7 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                         </p>
 
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            50
+                            {report?.quizAssessment?.otherMarks}
                         </p>
                     </div>
                 </div>
@@ -90,13 +97,13 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                     </p>
 
                     <p className="text-md md:text-sm font-medium text-slate-700">
-                        100
+                        {totalMarks}
                     </p>
                 </div>
 
                 <CourseProgress
                     size="sm"
-                    value={80}
+                    value={50}
                     variant={110 === 100 ? "success" : ""}
                 />
             </div>
