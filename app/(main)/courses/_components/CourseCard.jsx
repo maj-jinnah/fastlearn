@@ -11,13 +11,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 const CourseCard = async ({ course }) => {
-    console.log("course: - ", course);
 
     const session = await auth();
     const loggedInUser = await getUserByEmail(session?.user?.email);
     const isEnrolled = await hasEnrollForCourse(
         loggedInUser?._id.toString(),
-        course._id.toString()
+        course?._id.toString()
     );
 
     return (

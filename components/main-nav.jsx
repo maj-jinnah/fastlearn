@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/mobile-nav";
 // import lwsLogo from "@/assets/lws_logo.svg";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { toast } from "sonner";
 import { Logo } from "./logo";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button, buttonVariants } from "./ui/button";
@@ -22,18 +23,31 @@ export function MainNav({ items, children }) {
     const { data: session } = useSession();
     const [loginSession, setLoginSession] = useState(null);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
     useEffect(() => {
         setLoginSession(session);
+
+        async function fetchMe() {
+            try {
+                const response = await fetch("/api/me");
+                const data = await response.json();
+                setLoggedInUser(data);
+            } catch (error) {
+                toast.error(error.message || "Failed to fetch user data");
+            }
+        }
+
+        fetchMe();
     }, [session]);
 
     return (
         <>
             <div className="flex gap-6 lg:gap-10">
-                <Link href="/">
-                    {/* <Image className="max-w-[100px]" src={lwsLogo} alt="Logo" /> */}
-                    <Logo className="max-w-[100px]" />
-                </Link>
+                {/* <Link href="/"> */}
+                {/* <Image className="max-w-[100px]" src={lwsLogo} alt="Logo" /> */}
+                <Logo className="max-w-[100px]" />
+                {/* </Link> */}
                 {items?.length ? (
                     <nav className="hidden gap-6 lg:flex">
                         {items?.map((item, index) => (
@@ -95,8 +109,11 @@ export function MainNav({ items, children }) {
                         <div className="cursor-pointer">
                             <Avatar>
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png"
-                                    alt="@shadcn"
+                                    src={
+                                        loggedInUser?.profilePicture ||
+                                        ` https://github.com/shadcn.png`
+                                    }
+                                    alt={loggedInUser?.name || "User Avatar"}
                                 />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
@@ -106,6 +123,14 @@ export function MainNav({ items, children }) {
                         <DropdownMenuItem className="cursor-pointer" asChild>
                             <Link href="/account">Profile</Link>
                         </DropdownMenuItem>
+                        {loggedInUser?.role === "instructor" && (
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                asChild
+                            >
+                                <Link href="/dashboard">Dashboard</Link>
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem className="cursor-pointer" asChild>
                             <Link href="/account/enrolled-courses">
                                 My Courses
@@ -114,9 +139,16 @@ export function MainNav({ items, children }) {
                         <DropdownMenuItem className="cursor-pointer" asChild>
                             <Link href="">Testimonials & Certificates</Link>
                         </DropdownMenuItem>
-                        { loginSession && <DropdownMenuItem className="cursor-pointer" asChild>
-                            <Link href="#" onClick={() => signOut()} >Logout</Link>
-                        </DropdownMenuItem>}
+                        {loginSession && (
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                asChild
+                            >
+                                <Link href="#" onClick={() => signOut()}>
+                                    Logout
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <button

@@ -51,7 +51,7 @@ const courses = [
 
 const CourseDetails = ({ course }) => {
     // console.log("Course Details: --- ", course);
-    console.log("ins : ", course?.instructor?._id.toString());
+    // console.log("ins : ", course?.instructor?._id.toString());
 
     const formattedDate = new Date(course?.modifiedOn).toLocaleDateString(
         "en-US",
