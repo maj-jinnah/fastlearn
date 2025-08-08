@@ -1,5 +1,6 @@
 "use client";
 
+import StarRating from "@/components/star-rating";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +17,7 @@ import Link from "next/link";
 export const columns = [
   {
     id: "name",
-    accessorKey: "student.name",
+    accessorKey: "user",
     header: ({ column }) => {
       return (
         <Button
@@ -27,6 +28,13 @@ export const columns = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const { first_name, last_name } = row.original.user;
+      return (
+        <p>{`${first_name} ${last_name}`}</p>
+      );
+    },
+
   },
   {
     accessorKey: "rating",
@@ -40,9 +48,17 @@ export const columns = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const { rating } = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <StarRating rating={rating} />
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "review",
+    accessorKey: "content",
     header: ({ column }) => {
       return (
         <Button

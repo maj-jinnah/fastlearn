@@ -62,7 +62,7 @@ export async function getCourseDetailsById(id) {
     return course;
 }
 
-export async function getCourseDetailsByInstructor(instructorId) {
+export async function getCourseDetailsByInstructor(instructorId, expand) {
     const courses = await Course.find({ instructor: instructorId }).lean();
 
     const enrollments = await Promise.all(
@@ -90,6 +90,14 @@ export async function getCourseDetailsByInstructor(instructorId) {
     const flattenedTestimonials = testimonials.flat();
 
     const avgRating = flattenedTestimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / flattenedTestimonials.length;
+
+    if(expand){
+        return {
+            'courses': courses,
+            'enrollments': enrollments.flat(),
+            'totalReviews': flattenedTestimonials,
+        }
+    }
 
     return {
         'courses': courses.length,

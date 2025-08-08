@@ -8,3 +8,8 @@ export async function getUserByEmail(email) {
     .lean();
     return user;
 }
+
+export async function getUserDetails(userId) {
+  const user = await User.findById(userId).select("-password").lean();
+  return user;
+}

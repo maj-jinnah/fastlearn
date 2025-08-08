@@ -62,6 +62,7 @@ export function DataTable({ columns, data }) {
           </Button>
         </Link>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -112,6 +113,7 @@ export function DataTable({ columns, data }) {
           </TableBody>
         </Table>
       </div>
+      
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
