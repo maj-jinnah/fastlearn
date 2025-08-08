@@ -16,7 +16,7 @@ import Link from "next/link";
 export const columns = [
   {
     id: "name",
-    accessorKey: "student.name",
+    accessorKey: "studentName",
     header: ({ column }) => {
       return (
         <Button
@@ -29,7 +29,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "student.email",
+    accessorKey: "studentEmail",
     header: ({ column }) => {
       return (
         <Button
@@ -42,7 +42,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "student.quizMark",
+    accessorKey: "quizMark",
     header: ({ column }) => {
       return (
         <Button
@@ -55,7 +55,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "student.progress",
+    accessorKey: "progress",
     header: ({ column }) => {
       return (
         <Button
@@ -66,9 +66,13 @@ export const columns = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const progress = row.getValue("progress");
+      return <div>{progress}%</div>;
+    },
   },
   {
-    accessorKey: "date",
+    accessorKey: "enrollment_date",
     header: ({ column }) => {
       return (
         <Button
@@ -79,6 +83,10 @@ export const columns = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("enrollment_date"));
+      return <div>{date.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}</div>;
+    }
   },
   // {
   //   id: "actions",

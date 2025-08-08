@@ -7,7 +7,7 @@ const ReviewsPage = async ({params}) => {
   const { courseId } = await params;
   const course =  await getCourseDetailsById( courseId);
 
-  console.log('course details --- ', course)
+  // console.log('course details --- ', course)
 
   return (
     <div className="p-6">

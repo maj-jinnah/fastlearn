@@ -54,7 +54,7 @@ export async function getCourseDetailsById(id) {
             populate: {
                 path: 'user',
                 model: User,
-                select: 'first_name last_name email profile_picture ',
+                select: 'firstName lastName email profilePicture ',
             },
         })
         .lean();

@@ -29,9 +29,9 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const { first_name, last_name } = row.original.user;
+      const { firstName, lastName } = row.original.user;
       return (
-        <p>{`${first_name} ${last_name}`}</p>
+        <p>{`${firstName} ${lastName}`}</p>
       );
     },
 
