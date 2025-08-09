@@ -7,7 +7,7 @@ import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
 
 export async function getCourseList() {
-    const courses = await Course.find({})
+    const courses = await Course.find({active:true})
         .select('title description thumbnail price active category instructor modules testimonials')
         .populate({
             path: 'category',
@@ -63,10 +63,10 @@ export async function getCourseDetailsById(id) {
 }
 
 export async function getCourseDetailsByInstructor(instructorId, expand) {
-    const courses = await Course.find({ instructor: instructorId }).lean();
+    const publishedCourses = await Course.find({ instructor: instructorId, active: true }).lean();
 
     const enrollments = await Promise.all(
-        courses.map(async (course) => {
+        publishedCourses.map(async (course) => {
             const list = await getEnrollmentsForCourse(course._id.toString());
             return list;
         })
@@ -74,14 +74,14 @@ export async function getCourseDetailsByInstructor(instructorId, expand) {
 
     const groupByCourses = Object.groupBy(enrollments.flat(), ({ course }) => course);
 
-    const totalRevenue = courses.reduce((acc, course) => {
+    const totalRevenue = publishedCourses.reduce((acc, course) => {
         return acc + (groupByCourses[course?._id].length * course.price);
     }, 0);
 
     const total = enrollments.reduce((sum, n) => sum + n.length, 0);
 
     const testimonials = await Promise.all(
-        courses.map(async (course) => {
+        publishedCourses.map(async (course) => {
             const list = await getTestimonialsForCourse(course._id.toString());
             return list;
         })
@@ -91,19 +91,29 @@ export async function getCourseDetailsByInstructor(instructorId, expand) {
 
     const avgRating = flattenedTestimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / flattenedTestimonials.length;
 
-    if(expand){
+    if (expand) {
+        const allCourses = await Course.find({ instructor: instructorId }).lean();
         return {
-            'courses': courses,
+            'courses': allCourses,
             'enrollments': enrollments.flat(),
             'totalReviews': flattenedTestimonials,
         }
     }
 
     return {
-        'courses': courses.length,
+        'courses': publishedCourses.length,
         'enrollments': total,
         'totalReviews': flattenedTestimonials.length,
         'averageRating': avgRating.toFixed(1),
         'revenue': totalRevenue,
     };
+}
+
+export async function create(courseData) {
+    try {
+        const course = await Course.create(courseData);
+        return JSON.parse(JSON.stringify(course));
+    } catch (error) {
+        throw new Error(error)
+    }
 }

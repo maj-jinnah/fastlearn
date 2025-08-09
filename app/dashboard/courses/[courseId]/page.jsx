@@ -14,8 +14,12 @@ import { TitleForm } from "./_components/title-form";
 import { CourseActions } from "./_components/course-action";
 import AlertBanner from "@/components/alert-banner";
 import { QuizSetForm } from "./_components/quiz-set-form";
+import { getCourseDetailsById } from "@/queries/courses";
 
-const EditCourse = () => {
+const EditCourse = async({params}) => {
+  const {courseId} = await params;
+  const course = await getCourseDetailsById(courseId);
+  // console.log('edit course---', course)
   return (
     <>
       <AlertBanner
@@ -34,15 +38,15 @@ const EditCourse = () => {
             </div>
             <TitleForm
               initialData={{
-                title: "Reactive Accelerator",
+                title: course?.title,
               }}
-              courseId={1}
+              courseId={courseId}
             />
-            <DescriptionForm initialData={{}} courseId={1} />
-            <ImageForm initialData={{}} courseId={1} />
-            <CategoryForm initialData={{}} courseId={1} />
+            <DescriptionForm initialData={{description: course?.description}} courseId={courseId} />
+            <ImageForm initialData={{}} courseId={courseId} />
+            <CategoryForm initialData={{}} courseId={courseId} />
 
-            <QuizSetForm initialData={{}} courseId={1} />
+            <QuizSetForm initialData={{}} courseId={courseId} />
           </div>
           <div className="space-y-6">
             <div>
@@ -51,14 +55,14 @@ const EditCourse = () => {
                 <h2 className="text-xl">Course Modules</h2>
               </div>
 
-              <ModulesForm initialData={[]} courseId={[]} />
+              <ModulesForm initialData={[]} courseId={[courseId]} />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
                 <h2 className="text-xl">Sell you course</h2>
               </div>
-              <PriceForm initialData={{}} courseId={1} />
+              <PriceForm initialData={{}} courseId={courseId} />
             </div>
           </div>
         </div>

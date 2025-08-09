@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
+// import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -114,7 +114,7 @@ export const CategoryForm = ({
           {selectedOptions?.label || "No category"}
         </p>
       )}
-      {console.log({ options })}
+      {/* {console.log({ options })} */}
       {isEditing && (
         <Form {...form}>
           <form
@@ -127,7 +127,7 @@ export const CategoryForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox options={options} {...field} />
+                    {/* <Combobox options={options} {...field} /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
