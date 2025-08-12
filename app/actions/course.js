@@ -17,7 +17,8 @@ export async function createCourse(data) {
 
 export async function updateCourse(courseId, dataToUpdate) {
     try {
-        await Course.findOneAndUpdate({ _id: courseId }, dataToUpdate);
+        // console.log('data to update', dataToUpdate)
+        await Course.findByIdAndUpdate({ _id: courseId }, dataToUpdate);
     } catch (error) {
         throw new Error(error);
     }
