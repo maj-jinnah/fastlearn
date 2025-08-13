@@ -39,6 +39,7 @@ export const ImageForm = ({ initialData, courseId }) => {
                     const data = await res.json();
                     // console.log('image response data --- ', data)
                     if (res.status === 200) {
+                        initialData.imageUrl = data?.url;
                         toast.success("Course image updated");
                         toggleEdit();
                         router.refresh();

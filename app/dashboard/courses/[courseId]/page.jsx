@@ -22,6 +22,14 @@ const EditCourse = async ({ params }) => {
         id: category._id.toString(),
     }));
 
+    const modules = course?.modules.map((module) => ({
+        ...module,
+        _id: module._id.toString(),
+        course: module.course.toString(),
+    }));
+
+    // console.log("modules --- ", modules);
+
     return (
         <>
             <AlertBanner
@@ -48,7 +56,7 @@ const EditCourse = async ({ params }) => {
                             initialData={{ description: course?.description }}
                             courseId={courseId}
                         />
-                        <ImageForm initialData={{}} courseId={courseId} />
+                        <ImageForm initialData={{initialData: course?.thumbnail}} courseId={courseId} />
                         <CategoryForm
                             initialData={{value: course?.category?.title}}
                             courseId={courseId}
@@ -65,8 +73,8 @@ const EditCourse = async ({ params }) => {
                             </div>
 
                             <ModulesForm
-                                initialData={[]}
-                                courseId={[courseId]}
+                                initialData={modules}
+                                courseId={courseId}
                             />
                         </div>
                         <div>
