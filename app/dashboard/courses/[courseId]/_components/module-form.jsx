@@ -21,16 +21,18 @@ import { toast } from "sonner";
 import { ModuleList } from "./module-list";
 import { get } from "mongoose";
 import { getSlug } from "@/lib/convert-data";
-import { createModule } from "@/app/actions/module";
+import { createModule, reOrderModules } from "@/app/actions/module";
 
 const formSchema = z.object({
   title: z.string().min(1),
 });
 
 export const ModulesForm = ({ initialData, courseId }) => {
+  
   const [modules, setModules] = useState(initialData);
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
   const router = useRouter();
 
   const toggleCreating = () => setIsCreating((current) => !current);
@@ -70,9 +72,11 @@ export const ModulesForm = ({ initialData, courseId }) => {
   };
 
   const onReorder = async (updateData) => {
-    console.log({ updateData });
+    // console.log({ updateData });
     try {
       setIsUpdating(true);
+
+      await reOrderModules(updateData);
 
       toast.success("Chapters reordered");
       router.refresh();
@@ -84,7 +88,7 @@ export const ModulesForm = ({ initialData, courseId }) => {
   };
 
   const onEdit = (id) => {
-    router.push(`/dashboard/courses/1/modules/${1}`);
+    router.push(`/dashboard/courses/${courseId}/modules/${id}`);
   };
 
   return (

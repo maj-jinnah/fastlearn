@@ -18,7 +18,7 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { VideoPlayer } from "@/app/(player)/[course_slug]/[lesson]/_components/video-player";
+// import { VideoPlayer } from "@/app/(player)/[course_slug]/[lesson]/_components/video-player";
 
 const formSchema = z.object({
   url: z.string().min(1, {
@@ -73,7 +73,7 @@ export const VideoUrlForm = ({ initialData, courseId, lessonId }) => {
             {"https://www.youtube.com/embed/Cn4G2lZ_g2I?si=8FxqU8_NU6rYOrG1"}
           </p>
           <div className="mt-6">
-            <VideoPlayer />
+            {/* <VideoPlayer /> */}
           </div>
         </>
       )}

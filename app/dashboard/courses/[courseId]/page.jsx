@@ -26,7 +26,7 @@ const EditCourse = async ({ params }) => {
         ...module,
         _id: module._id.toString(),
         course: module.course.toString(),
-    }));
+    })).sort((a, b) => a.order - b.order);
 
     // console.log("modules --- ", modules);
 

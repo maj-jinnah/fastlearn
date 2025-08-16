@@ -1,7 +1,7 @@
-const { auth } = require("@/auth");
-const { getUserByEmail } = require("@/queries/user");
-const { dbConnection } = require("@/service/dbConnection");
-const { NextResponse } = require("next/server");
+import { auth } from "@/auth";
+import { getUserByEmail } from "@/queries/user";
+import { dbConnection } from "@/service/dbConnection";
+import { NextResponse } from "next/server";
 
 export const GET = async (request) => {
     const session = await auth();

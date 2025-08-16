@@ -8,3 +8,12 @@ export async function create(data) {
         throw new Error(error)
     }
 }
+
+export async function getModuleById(moduleId) {
+    try {
+        const response = await Module.findById(moduleId).lean();
+        return { ...response, _id: response._id.toString() };
+    } catch (error) {
+        throw new Error(error)
+    }
+}

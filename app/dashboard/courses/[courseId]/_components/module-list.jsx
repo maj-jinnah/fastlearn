@@ -39,9 +39,11 @@ export const ModuleList = ({ items, onReorder, onEdit }) => {
     setModules(items);
 
     const bulkUpdateData = updatedModules.map((module) => ({
-      id: module.id,
-      position: items.findIndex((item) => item.id === module.id),
+      _id: module._id,
+      position: items.findIndex((item) => item._id === module._id),
     }));
+
+    // console.log('bulkUpdateData --- ', bulkUpdateData)
 
     onReorder(bulkUpdateData);
   };
@@ -56,7 +58,7 @@ export const ModuleList = ({ items, onReorder, onEdit }) => {
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {modules.map((module, index) => (
-              <Draggable key={module.id} draggableId={module.id} index={index}>
+              <Draggable key={module._id} draggableId={module._id} index={index}>
                 {(provided) => (
                   <div
                     className={cn(
@@ -88,7 +90,7 @@ export const ModuleList = ({ items, onReorder, onEdit }) => {
                         {module.active ? "Published" : "Draft"}
                       </Badge>
                       <Pencil
-                        onClick={() => onEdit(module.id)}
+                        onClick={() => onEdit(module._id)}
                         className="w-4 h-4 cursor-pointer hover:opacity-75 transition"
                       />
                     </div>
