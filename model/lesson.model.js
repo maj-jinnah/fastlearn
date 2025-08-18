@@ -33,6 +33,10 @@ const lessonSchema = new Schema({
     default: 'private',
     type: String
   },
+  order :{
+    required: true,
+    type: Number
+  },
 });
 
 export const Lesson = mongoose.models.Lesson ?? mongoose.model("Lesson", lessonSchema);

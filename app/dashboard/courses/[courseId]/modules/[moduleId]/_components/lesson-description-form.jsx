@@ -25,15 +25,16 @@ const formSchema = z.object({
 });
 
 export const LessonDescriptionForm = ({ initialData, courseId, lessonId }) => {
-  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState(initialData?.description);
+  const router = useRouter();
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: initialData?.description || "",
+      description: description || "",
     },
   });
 
@@ -68,12 +69,12 @@ export const LessonDescriptionForm = ({ initialData, courseId, lessonId }) => {
         <div
           className={cn(
             "text-sm mt-2",
-            !initialData.description && "text-slate-500 italic"
+            !description && "text-slate-500 italic"
           )}
         >
-          {!initialData.description && "No description"}
-          {initialData.description && (
-            <Preview value={initialData.description} />
+          {!description && "No description"}
+          {description && (
+            <Preview value={description} />
           )}
         </div>
       )}

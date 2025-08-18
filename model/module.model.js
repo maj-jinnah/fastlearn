@@ -22,8 +22,8 @@ const moduleSchema = new Schema({
     type: Schema.ObjectId,
   },
   lessonIds: {
-    required: true,
     type: [Schema.ObjectId],
+     ref: "Lesson"
   },
   order: {
     required: true,

@@ -40,8 +40,8 @@ export const LessonList = ({ items, onReorder, onEdit }) => {
     setModules(items);
 
     const bulkUpdateData = updatedModules.map((module) => ({
-      id: module.id,
-      position: items.findIndex((item) => item.id === module.id),
+      _id: module._id,
+      position: items.findIndex((item) => item._id === module._id),
     }));
 
     onReorder(bulkUpdateData);
@@ -57,12 +57,12 @@ export const LessonList = ({ items, onReorder, onEdit }) => {
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {modules.map((module, index) => (
-              <Draggable key={module.id} draggableId={module.id} index={index}>
+              <Draggable key={module._id} draggableId={module._id} index={index}>
                 {(provided) => (
                   <div
                     className={cn(
                       "flex items-center gap-x-2 bg-slate-200 border-slate-200 border text-slate-700 rounded-md mb-4 text-sm",
-                      module.isPublished &&
+                      module.active &&
                         "bg-sky-100 border-sky-200 text-sky-700"
                     )}
                     ref={provided.innerRef}
@@ -71,7 +71,7 @@ export const LessonList = ({ items, onReorder, onEdit }) => {
                     <div
                       className={cn(
                         "px-2 py-3 border-r border-r-slate-200 hover:bg-slate-300 rounded-l-md transition",
-                        module.isPublished &&
+                        module.active &&
                           "border-r-sky-200 hover:bg-sky-200"
                       )}
                       {...provided.dragHandleProps}
@@ -86,13 +86,13 @@ export const LessonList = ({ items, onReorder, onEdit }) => {
                       <Badge
                         className={cn(
                           "bg-gray-500",
-                          module.isPublished && "bg-emerald-600"
+                          module.active && "bg-emerald-600"
                         )}
                       >
-                        {module.isPublished ? "Published" : "Draft"}
+                        {module.active ? "Published" : "Draft"}
                       </Badge>
                       <Pencil
-                        onClick={() => onEdit(module.id)}
+                        onClick={() => onEdit(module?._id)}
                         className="w-4 h-4 cursor-pointer hover:opacity-75 transition"
                       />
                     </div>

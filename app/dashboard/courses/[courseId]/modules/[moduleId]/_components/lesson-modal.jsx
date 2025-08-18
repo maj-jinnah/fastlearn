@@ -17,7 +17,8 @@ import { LessonDescriptionForm } from "./lesson-description-form";
 import { LessonAccessForm } from "./lesson-access-form";
 import { VideoUrlForm } from "./video-url-form";
 import { CourseActions } from "../../../_components/course-action";
-export const LessonModal = ({ open, setOpen }) => {
+export const LessonModal = ({ open, setOpen, courseId, lesson }) => {
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* <DialogTrigger>Open</DialogTrigger> */}
@@ -31,7 +32,7 @@ export const LessonModal = ({ open, setOpen }) => {
           <div className="flex items-center justify-between">
             <div className="w-full">
               <Link
-                href={`/dashboard/courses/${1}`}
+                href={`/dashboard/courses/${courseId}`}
                 className="flex items-center text-sm hover:opacity-75 transition mb-6"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -47,42 +48,43 @@ export const LessonModal = ({ open, setOpen }) => {
               <div>
                 <div className="flex items-center gap-x-2">
                   <IconBadge icon={LayoutDashboard} />
-                  <h2 className="text-xl">Customize Your chapter</h2>
+                  {/* <h2 className="text-xl">Customize Your chapter</h2> */}
+                  <DialogTitle className="text-xl">Customize Your chapter</DialogTitle>
                 </div>
                 <LessonTitleForm
-                  initialData={{}}
-                  courseId={"1"}
-                  lessonId={"1"}
+                  initialData={{ title: lesson?.title}}
+                  courseId={courseId}
+                  lessonId={lesson?._id}
                 />
                 <LessonDescriptionForm
-                  initialData={{}}
-                  courseId={"1"}
-                  lessonId={"1"}
+                  initialData={{description: lesson?.description}}
+                  courseId={courseId}
+                  lessonId={lesson?._id}
                 />
               </div>
               <div>
                 <div className="flex items-center gap-x-2">
                   <IconBadge icon={Eye} />
-                  <h2 className="text-xl">Access Settings</h2>
+                  <DialogTitle className="text-xl">Access Settings</DialogTitle>
                 </div>
                 <LessonAccessForm
                   initialData={{}}
-                  courseId={"1"}
-                  chapterId={"1"}
+                  courseId={courseId}
+                  chapterId={lesson?._id}
                 />
               </div>
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={Video} />
-                <h2 className="text-xl">Add a video</h2>
+                <DialogTitle className="text-xl">Add a video</DialogTitle>
               </div>
               <VideoUrlForm
                 initialData={{
                   url: "https://www.youtube.com/embed/Cn4G2lZ_g2I?si=8FxqU8_NU6rYOrG1",
                 }}
-                courseId={1}
-                lessonId={1}
+                courseId={courseId}
+                lessonId={lesson?._id}
               />
             </div>
           </div>

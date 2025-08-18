@@ -1,0 +1,48 @@
+'use server';
+
+import { Lesson } from "@/model/lesson.model";
+import { Module } from "@/model/module.model";
+import { create } from "@/queries/lessons";
+
+
+export async function createLesson(formData){
+    try {
+        const title = formData.get('title');
+        const slug = formData.get('slug');
+        const moduleId = formData.get('moduleId');
+        const order = formData.get('order');
+
+        const createdLesson = await create({title, slug, moduleId, order});
+
+        const lessonModule = await Module.findById(moduleId);
+        lessonModule.lessonIds.push(createdLesson?._id);
+        await lessonModule.save();
+
+        return createdLesson;
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export async function reOrderLesson(data){
+    try {
+        await Promise.all(
+            data.map(async (item) => {
+                const orderedLesson = await Lesson.findById(item.id);
+                orderedLesson.order = item.position;
+                await orderedLesson.save();
+            })
+        )
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export async function updateLesson(lessonId, data){
+    try {
+        await Lesson.findByIdAndUpdate({ _id: lessonId }, data);
+    } catch (error) {
+        throw new Error(error)
+    }
+}

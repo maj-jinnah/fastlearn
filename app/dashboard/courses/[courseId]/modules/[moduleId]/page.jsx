@@ -1,25 +1,24 @@
 import AlertBanner from "@/components/alert-banner";
 import { IconBadge } from "@/components/icon-badge";
+import { getModuleById } from "@/queries/modules";
 import {
   ArrowLeft,
   BookOpenCheck,
-  Eye,
-  LayoutDashboard,
-  Video,
+  LayoutDashboard
 } from "lucide-react";
 import Link from "next/link";
-import { ModuleTitleForm } from "./_components/module-title-form";
-import { LessonForm } from "./_components/lesson-form";
 import { CourseActions } from "../../_components/course-action";
-import { getModuleById } from "@/queries/modules";
+import { LessonForm } from "./_components/lesson-form";
+import { ModuleTitleForm } from "./_components/module-title-form";
+import { replaceMongoIdInArray } from "@/lib/convert-data";
 
 const Module = async ({ params }) => {
   const {courseId, moduleId} = await params;
 
   const module = await getModuleById(moduleId);
-  console.log('module?._id', module?._id)
-  // console.log('moduleId', moduleId)
-  console.log('moduleId', moduleId)
+
+  const lessons = replaceMongoIdInArray(module?.lessonIds).sort((a, b) => a.order - b.order);
+
   return (
     <>
       <AlertBanner
@@ -56,7 +55,7 @@ const Module = async ({ params }) => {
                 <IconBadge icon={BookOpenCheck} />
                 <h2 className="text-xl">Module Lessons</h2>
               </div>
-              <LessonForm />
+              <LessonForm initialData={lessons} moduleId={moduleId} courseId={courseId} />
             </div>
           </div>
           <div>
