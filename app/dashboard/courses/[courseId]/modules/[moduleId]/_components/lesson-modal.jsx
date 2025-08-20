@@ -17,6 +17,7 @@ import { LessonDescriptionForm } from "./lesson-description-form";
 import { LessonAccessForm } from "./lesson-access-form";
 import { VideoUrlForm } from "./video-url-form";
 import { CourseActions } from "../../../_components/course-action";
+
 export const LessonModal = ({ open, setOpen, courseId, lesson }) => {
 
   return (
@@ -68,9 +69,9 @@ export const LessonModal = ({ open, setOpen, courseId, lesson }) => {
                   <DialogTitle className="text-xl">Access Settings</DialogTitle>
                 </div>
                 <LessonAccessForm
-                  initialData={{}}
+                  initialData={{isFree: lesson?.access !== "private"}}
                   courseId={courseId}
-                  chapterId={lesson?._id}
+                  lessonId={lesson?._id}
                 />
               </div>
             </div>

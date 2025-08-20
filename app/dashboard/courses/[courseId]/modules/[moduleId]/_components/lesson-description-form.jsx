@@ -19,6 +19,7 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateLesson } from "@/app/actions/lesson";
 
 const formSchema = z.object({
   description: z.string().min(1),
@@ -34,7 +35,7 @@ export const LessonDescriptionForm = ({ initialData, courseId, lessonId }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: description || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -42,7 +43,12 @@ export const LessonDescriptionForm = ({ initialData, courseId, lessonId }) => {
 
   const onSubmit = async (values) => {
     try {
-      toast.success("Lesson updated");
+
+      // console.log(values);
+      await updateLesson(lessonId, values);
+      setDescription(values.description);
+
+      toast.success("Description updated");
       toggleEdit();
       router.refresh();
     } catch (error) {
@@ -96,7 +102,7 @@ export const LessonDescriptionForm = ({ initialData, courseId, lessonId }) => {
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center mt-13 gap-x-2">
               <Button disabled={!isValid || isSubmitting} type="submit">
                 Save
               </Button>

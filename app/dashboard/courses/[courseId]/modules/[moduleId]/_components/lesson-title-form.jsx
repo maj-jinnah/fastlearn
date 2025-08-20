@@ -43,7 +43,7 @@ export const LessonTitleForm = ({ initialData, courseId, lessonId }) => {
       await updateLesson(lessonId, values);
       setTitle(values.title);
 
-      toast.success("Lesson updated");
+      toast.success("Title updated");
       toggleEdit();
       router.refresh();
     } catch {
