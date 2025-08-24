@@ -2,7 +2,13 @@ import AlertBanner from "@/components/alert-banner";
 import { IconBadge } from "@/components/icon-badge";
 import { getCategories } from "@/queries/categories";
 import { getCourseDetailsById } from "@/queries/courses";
-import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
+import {
+    ArrowLeft,
+    CircleDollarSign,
+    LayoutDashboard,
+    ListChecks,
+} from "lucide-react";
+import Link from "next/link";
 import { CategoryForm } from "./_components/category-form";
 import { CourseActions } from "./_components/course-action";
 import { DescriptionForm } from "./_components/description-form";
@@ -14,7 +20,8 @@ import { TitleForm } from "./_components/title-form";
 
 const EditCourse = async ({ params }) => {
     const { courseId } = await params;
-    const course = await getCourseDetailsById(courseId.toString());
+
+    const course = await getCourseDetailsById(courseId);
     const categories = await getCategories();
     const mappedCategories = categories.map((category) => ({
         label: category.title,
@@ -22,23 +29,43 @@ const EditCourse = async ({ params }) => {
         id: category._id.toString(),
     }));
 
-    const modules = course?.modules.map((module) => ({
-        ...module,
-        _id: module._id.toString(),
-        course: module.course.toString(),
-    })).sort((a, b) => a.order - b.order);
-
-    // console.log("modules --- ", modules);
+    const modules = course?.modules
+        .map((module) => ({
+            ...module,
+            _id: module._id.toString(),
+            course: module.course.toString(),
+        }))
+        .sort((a, b) => a.order - b.order);
 
     return (
         <>
-            <AlertBanner
-                label="This course is unpublished. It will not be visible in the course."
-                variant="warning"
-            />
+            {course?.active === false && (
+                <AlertBanner
+                    label="This course is unpublished. It will not be visible in the course."
+                    variant="warning"
+                />
+            )}
             <div className="p-6">
-                <div className="flex items-center justify-end">
-                    <CourseActions />
+                <div className="flex items-center justify-between">
+                    <div className="w-full">
+                        <Link
+                            href={`/dashboard/courses`}
+                            className="flex items-center text-sm hover:opacity-75 transition mb-6"
+                        >
+                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            Back to courses
+                        </Link>
+                        <div className="flex items-center justify-end">
+                            <CourseActions
+                                courseId={courseId}
+                                isActive={course?.active}
+                            />
+                        </div>
+                    </div>
+                    {/* <CourseActions
+                        courseId={courseId}
+                        isActive={course?.active}
+                    /> */}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
                     <div>
@@ -56,9 +83,12 @@ const EditCourse = async ({ params }) => {
                             initialData={{ description: course?.description }}
                             courseId={courseId}
                         />
-                        <ImageForm initialData={{initialData: course?.thumbnail}} courseId={courseId} />
+                        <ImageForm
+                            initialData={{ initialData: course?.thumbnail }}
+                            courseId={courseId}
+                        />
                         <CategoryForm
-                            initialData={{value: course?.category?.title}}
+                            initialData={{ value: course?.category?.title }}
                             courseId={courseId}
                             options={mappedCategories}
                         />
