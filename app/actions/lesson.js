@@ -46,3 +46,34 @@ export async function updateLesson(lessonId, data){
         throw new Error(error)
     }
 }
+
+export async function changeLessonPublishState(LessonId) {
+  try {
+    const lesson = await Lesson.findById(LessonId);
+    if (!lesson) throw new Error("Lesson not found");
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+      LessonId,
+      { active: !lesson?.active },
+      { new: true } // return updated doc
+    );
+
+    return updatedLesson?.active;
+  } catch (error) {
+    throw new Error(error.message || "Failed to toggle lesson state");
+  }
+}
+
+export async function deleteLesson(lessonId, moduleId) {
+  try {
+    const lesson = await Lesson.findByIdAndDelete(lessonId);
+    if (!lesson) throw new Error("Lesson not found");
+
+    await Module.findByIdAndUpdate(moduleId, {
+      $pull: { lessonIds: lessonId },
+    });
+
+  } catch (error) {
+    throw new Error(error.message || "Failed to delete lesson");
+  }
+}

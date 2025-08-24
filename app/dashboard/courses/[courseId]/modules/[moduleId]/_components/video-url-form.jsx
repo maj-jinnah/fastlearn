@@ -38,6 +38,11 @@ export const VideoUrlForm = ({ initialData, courseId, lessonId }) => {
         url: initialData?.url,
         duration: secondsToTime(initialData?.duration),
     });
+
+    // console.log('initialData', initialData);
+    // console.log('data', data);
+    // console.log('time', data?.duration);
+
     const router = useRouter();
 
     const toggleEdit = () => setIsEditing((current) => !current);

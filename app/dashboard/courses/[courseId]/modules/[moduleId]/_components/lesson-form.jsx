@@ -18,7 +18,7 @@ import { getSlug } from "@/lib/convert-data";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { LessonList } from "./lesson-list";
 import { LessonModal } from "./lesson-modal";
@@ -183,6 +183,12 @@ export const LessonForm = ({ initialData, moduleId, courseId }) => {
                 setOpen={setIsEditing}
                 courseId={courseId}
                 lesson={lessonToEdit}
+                moduleId={moduleId}
+                onClose={() => {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2500);
+                }}
             />
         </div>
     );

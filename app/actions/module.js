@@ -1,6 +1,7 @@
 'use server';
 
 import { Course } from "@/model/course-model";
+import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { create } from "@/queries/modules";
 
@@ -47,5 +48,47 @@ export async function updateModule(moduleId, data) {
         await Module.findByIdAndUpdate({ _id: moduleId }, data);
     } catch (error) {
         throw new Error(error)
+    }
+}
+
+export async function changeModulePublishState(moduleId) {
+    try {
+        const foundModule = await Module.findById(moduleId);
+        if (!foundModule) throw new Error("Module not found");
+
+        const updatedModule = await Module.findByIdAndUpdate(
+            moduleId,
+            { active: !foundModule?.active },
+            { new: true } // return updated doc
+        );
+
+        return updatedModule?.active;
+    } catch (error) {
+        throw new Error(error.message || "Failed to toggle lesson state");
+    }
+}
+
+export async function deleteModule(moduleId, courseId) {
+    try {
+        const foundModule = await Module.findById(moduleId);
+        if (!foundModule) throw new Error("Module not found");
+
+        if (foundModule.active) {
+            throw new Error("You can't delete a published module");
+        }
+
+        // Remove module reference from the course
+        await Course.findByIdAndUpdate(courseId, {
+            $pull: { modules: moduleId },
+        });
+
+        // Optionally, you might want to delete all lessons associated with this module
+        await Lesson.deleteMany({ _id: { $in: foundModule.lessonIds } });
+
+        // Finally, delete the module
+        await Module.findByIdAndDelete(moduleId);
+
+    } catch (error) {
+        throw new Error(error.message || "Failed to delete module");
     }
 }
