@@ -1,9 +1,12 @@
 import { getInstructorDashboardData } from "@/lib/dashboard-helper";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
+import { toPlainObject } from "@/lib/convert-data";
 
 const CoursesPage = async () => {
-    const data = await getInstructorDashboardData();
+    const rawData = await getInstructorDashboardData();
+    const data = toPlainObject(rawData);
+    // console.log("instructor dashboard data", data);
     // console.log("courses", data?.courses);
     return (
         <div className="p-6">

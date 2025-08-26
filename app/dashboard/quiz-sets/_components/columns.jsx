@@ -27,8 +27,9 @@ export const columns = [
     },
   },
   {
-    accessorKey: "totalQuiz",
+    accessorKey: `quizIds.length`,
     header: ({ column }) => {
+
       return (
         <Button
           variant="ghost"
@@ -40,7 +41,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "isPublished",
+    accessorKey: `active`,
     header: ({ column }) => {
       return (
         <Button
@@ -52,11 +53,11 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const isPublished = row.getValue("isPublished") || false;
+      const active = row.getValue("active");
 
       return (
-        <Badge className={cn("bg-gray-500", isPublished && "bg-success")}>
-          {isPublished ? "Published" : "Unpublished"}
+        <Badge className={cn("bg-gray-500", active && "bg-emerald-400")}>
+          {active ? "Published" : "Unpublished"}
         </Badge>
       );
     },
@@ -64,7 +65,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { id } = row.original;
+      const { _id } = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,7 +75,7 @@ export const columns = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={`/dashboard/quiz-sets/${id}`}>
+            <Link href={`/dashboard/quiz-sets/${_id}`}>
               <DropdownMenuItem>
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit

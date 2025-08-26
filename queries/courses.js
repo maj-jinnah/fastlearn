@@ -5,6 +5,7 @@ import { Testimonial } from "@/model/testimonial-model";
 import { User } from "@/model/user-model";
 import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
+import { toPlainObject } from "@/lib/convert-data";
 
 export async function getCourseList() {
     const courses = await Course.find({active:true})
@@ -30,7 +31,7 @@ export async function getCourseList() {
             model: Testimonial,
         }).lean();
 
-    return courses;
+    return toPlainObject(courses);
 }
 
 export async function getCourseDetailsById(id) {
@@ -60,7 +61,7 @@ export async function getCourseDetailsById(id) {
         })
         .lean();
 
-    return course;
+    return toPlainObject(course);
 }
 
 export async function getCourseDetailsByInstructor(instructorId, expand) {
