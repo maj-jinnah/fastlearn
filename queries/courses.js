@@ -6,6 +6,7 @@ import { User } from "@/model/user-model";
 import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
 import { toPlainObject } from "@/lib/convert-data";
+import { Lesson } from "@/model/lesson.model";
 
 export async function getCourseList() {
     const courses = await Course.find({active:true})
@@ -49,6 +50,10 @@ export async function getCourseDetailsById(id) {
         .populate({
             path: 'modules',
             model: Module,
+            populate: {
+                path: 'lessonIds',
+                model: Lesson,
+            },
         })
         .populate({
             path: 'testimonials',

@@ -86,23 +86,44 @@ export async function deleteCourse(courseId) {
     }
 }
 
+// export async function quizSetForCourse(courseId, quizSetId) {
+//     try {
+//         const result = await Course.findByIdAndUpdate(
+//             courseId,
+//             { 
+//                 $addToSet: { quizSet: quizSetId } // Adds only if not already present
+//             },
+//             { 
+//                 new: true, // Return updated document
+//                 runValidators: true 
+//             }
+//         );
+
+//         if (!result) throw new Error("Course not found");
+
+//         return toPlainObject(result);
+//     } catch (error) {
+//         throw new Error(`Failed to add quizSet to course: ${error.message}`);
+//     }
+// }
+
 export async function quizSetForCourse(courseId, quizSetId) {
     try {
         const result = await Course.findByIdAndUpdate(
             courseId,
             { 
-                $addToSet: { quizSet: quizSetId } // Adds only if not already present
+                quizSet: quizSetId // Direct replacement
             },
             { 
-                new: true, // Return updated document
+                new: true,
                 runValidators: true 
             }
         );
 
         if (!result) throw new Error("Course not found");
 
-        return toPlainObject(result);
+        return { success: true, message: "QuizSet updated successfully" };
     } catch (error) {
-        throw new Error(`Failed to add quizSet to course: ${error.message}`);
+        throw new Error(`Failed to update quizSet for course: ${error.message}`);
     }
 }

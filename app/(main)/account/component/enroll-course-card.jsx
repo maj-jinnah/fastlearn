@@ -15,26 +15,34 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
         student: loggedInUser?._id.toString(),
     });
 
-    const totalCompletedModules = report?.totalCompletedModules?.length;
+    const totalModuleCount = enrolledCourse?.course?.modules?.length;
+    const totalCompletedModules = report?.totalCompletedModules ? report?.totalCompletedModules?.length : 0;
+    // const totalCompletedModules = report?.totalCompletedModules?.length;
     // const totalCompletedLessons = report?.totalCompletedLessons?.length;
 
-    const quizAssessments = report?.quizAssessment?.assessments;
-    const quizTaken = quizAssessments.filter(assessment=> assessment?.attempted);
+    const quizAssessments = report?.quizAssessment?.assessments ?? [];
+    const quizTaken = quizAssessments ?  quizAssessments?.filter(assessment=> assessment?.attempted) : [];
 
-    const correctQuizzes = quizTaken.map(quiz =>{
+    const correctQuizzes = quizTaken?.map(quiz =>{
         return (
             quiz?.options.filter(q => q.isCorrect === true && q.isSelected === true)
         )
     }).flat();
 
-    const quizMarks = correctQuizzes.length * 5;
-    const totalMarks = quizMarks + report?.quizAssessment?.otherMarks;
+    const quizMarks = correctQuizzes?.length * 5;
+    // console.log("Quiz Marks: ", quizMarks);
+    
+    const otherMarks = report?.quizAssessment?.otherMarks ?? 0;
+    const totalMarks = quizMarks + otherMarks;
+
+    // console.log("Total Marks: ", totalMarks);
+    // console.log('other marks ---', otherMarks)
 
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
             <div className="relative w-full aspect-video rounded-md overflow-hidden">
                 <Image
-                    src={`/assets/images/courses/${enrolledCourse?.course?.thumbnail}`}
+                    src={enrolledCourse?.course?.thumbnail}
                     alt={enrolledCourse?.course?.title}
                     className="object-cover"
                     fill
@@ -65,11 +73,11 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            Total Quizzes: {quizAssessments.length}
+                            Total Quizzes: {quizAssessments?.length}
                         </p>
 
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            Quiz taken <Badge variant="success">{quizTaken.length}</Badge>
+                            Quiz taken <Badge variant="success">{quizTaken?.length}</Badge>
                         </p>
                     </div>
                     <div className="flex items-center justify-between mt-2">
@@ -87,7 +95,7 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                         </p>
 
                         <p className="text-md md:text-sm font-medium text-slate-700">
-                            {report?.quizAssessment?.otherMarks}
+                            {otherMarks}
                         </p>
                     </div>
                 </div>
@@ -103,7 +111,7 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
 
                 <CourseProgress
                     size="sm"
-                    value={50}
+                    value={(totalCompletedModules / totalModuleCount) * 100 || 0}
                     variant={110 === 100 ? "success" : ""}
                 />
             </div>

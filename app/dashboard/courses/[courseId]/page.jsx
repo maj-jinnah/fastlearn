@@ -2,6 +2,7 @@ import AlertBanner from "@/components/alert-banner";
 import { IconBadge } from "@/components/icon-badge";
 import { getCategories } from "@/queries/categories";
 import { getCourseDetailsById } from "@/queries/courses";
+import { getAllQuizSets } from "@/queries/quizzes";
 import {
     ArrowLeft,
     CircleDollarSign,
@@ -17,7 +18,6 @@ import { ModulesForm } from "./_components/module-form";
 import { PriceForm } from "./_components/price-form";
 import { QuizSetForm } from "./_components/quiz-set-form";
 import { TitleForm } from "./_components/title-form";
-import { getAllQuizSets } from "@/queries/quizzes";
 
 const EditCourse = async ({ params }) => {
     const { courseId } = await params;
@@ -38,14 +38,14 @@ const EditCourse = async ({ params }) => {
         }))
         .sort((a, b) => a.order - b.order);
 
-        const quizSets = await getAllQuizSets(true);
-        const mappedQuizSets = quizSets.map((quizSet) => ({
-            label: quizSet.title,
-            value: quizSet._id,
-            id: quizSet._id,
-        }));
+    const quizSets = await getAllQuizSets(true);
+    const mappedQuizSets = quizSets.map((quizSet) => ({
+        label: quizSet.title,
+        value: quizSet._id,
+        id: quizSet._id,
+    }));
 
-        // console.log('course ---', course)
+    // console.log('course ---', course)
 
     return (
         <>
@@ -103,7 +103,11 @@ const EditCourse = async ({ params }) => {
                             options={mappedCategories}
                         />
 
-                        <QuizSetForm initialData={{quizSetId: course?.quizSet}} courseId={courseId} options={mappedQuizSets} />
+                        <QuizSetForm
+                            initialData={{ quizSetId: course?.quizSet }}
+                            courseId={courseId}
+                            options={mappedQuizSets}
+                        />
                     </div>
                     <div className="space-y-6">
                         <div>

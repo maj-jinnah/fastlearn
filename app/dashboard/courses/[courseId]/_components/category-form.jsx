@@ -59,7 +59,7 @@ export const CategoryForm = ({ initialData, courseId, options }) => {
             const selectedCategory = options.find(
                 (opt) => opt.value === values.value
             );
-            console.log(selectedCategory?.id)
+            // console.log(selectedCategory?.id)
             await updateCourse(courseId, { "category": selectedCategory?.id });
             toast.success("Course updated");
             toggleEdit();

@@ -1,13 +1,23 @@
 import { Accordion } from "@/components/ui/accordion";
-import { BookCheck, Clock10, Radio } from "lucide-react";
+import { BookCheck, Clock10 } from "lucide-react";
 import CourseModuleList from "./CourseModuleList";
+import { secondsToHourMinute } from "@/lib/time-to-seconds";
 
 const CourseCurriculum = ({ course }) => {
+    const totalDurationSeconds =
+        course?.modules
+            ?.map((module) =>
+                module.lessonIds?.reduce(
+                    (total, lesson) => total + (lesson.duration || 0),
+                    0
+                )
+            )
+            .reduce((sum, moduleDuration) => sum + moduleDuration, 0) || 0;
 
-    const totalDurationSeconds = course?.modules?.reduce(
-        (sum, course) => sum + course.duration,
-        0
-    );
+    // console.log("Total Duration Seconds: ", totalDurationSeconds);
+    // console.log("Course Curriculum: ", course);
+
+    const totalTime = secondsToHourMinute(totalDurationSeconds);
 
     return (
         <>
@@ -19,7 +29,7 @@ const CourseCurriculum = ({ course }) => {
                 </span>
                 <span className="flex items-center gap-1.5">
                     <Clock10 className="w-4 h-4" />
-                    {totalDurationSeconds / 60} Hours
+                    {totalTime}
                 </span>
                 {/* <span className="flex items-center gap-1.5">
                     <Radio className="w-4 h-4" />4 Live Class
@@ -30,7 +40,8 @@ const CourseCurriculum = ({ course }) => {
             <Accordion
                 defaultValue={["item-1", "item-2", "item-3"]}
                 type="multiple"
-                collapsible
+                // collapsible
+                collapsible="true"
                 className="w-full"
             >
                 {course?.modules &&
