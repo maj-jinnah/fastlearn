@@ -48,3 +48,15 @@ export async function addQuizToQuizSet(quizSetId, quizData) {
         throw new Error(error);
     }
 }
+
+export async function createQuizSet(data) {
+    try {
+        data['slug'] = getSlug(data?.title);
+        // console.log('data', data)
+        const newQuizSet = new QuizSet(data);
+        await newQuizSet.save();
+        return toPlainObject(newQuizSet);
+    } catch (error) {
+        throw new Error(error);
+    }
+}

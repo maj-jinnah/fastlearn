@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { createQuizSet } from "@/app/actions/quiz";
 
 const formSchema = z.object({
     title: z.string().min(1, {
@@ -35,11 +36,14 @@ const AddQuizSetForm = () => {
     const { isSubmitting, isValid } = form.formState;
 
     const onSubmit = async (values) => {
+
+        // console.log(values);
         try {
-            router.push(`/dashboard/quiz-sets/${1}`);
+            const newCreatedQuizSet = await createQuizSet(values);
+            router.push(`/dashboard/quiz-sets/${newCreatedQuizSet._id}`);
             toast.success("Quiz Set Created");
         } catch (error) {
-            toast.error("Something went wrong");
+            toast.error( error.message || "Something went wrong");
         }
     };
 

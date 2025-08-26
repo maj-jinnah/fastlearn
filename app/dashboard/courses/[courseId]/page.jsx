@@ -17,6 +17,7 @@ import { ModulesForm } from "./_components/module-form";
 import { PriceForm } from "./_components/price-form";
 import { QuizSetForm } from "./_components/quiz-set-form";
 import { TitleForm } from "./_components/title-form";
+import { getAllQuizSets } from "@/queries/quizzes";
 
 const EditCourse = async ({ params }) => {
     const { courseId } = await params;
@@ -36,6 +37,15 @@ const EditCourse = async ({ params }) => {
             course: module.course.toString(),
         }))
         .sort((a, b) => a.order - b.order);
+
+        const quizSets = await getAllQuizSets(true);
+        const mappedQuizSets = quizSets.map((quizSet) => ({
+            label: quizSet.title,
+            value: quizSet._id,
+            id: quizSet._id,
+        }));
+
+        // console.log('course ---', course)
 
     return (
         <>
@@ -84,7 +94,7 @@ const EditCourse = async ({ params }) => {
                             courseId={courseId}
                         />
                         <ImageForm
-                            initialData={{ initialData: course?.thumbnail }}
+                            initialData={{ imageUrl: course?.thumbnail }}
                             courseId={courseId}
                         />
                         <CategoryForm
@@ -93,7 +103,7 @@ const EditCourse = async ({ params }) => {
                             options={mappedCategories}
                         />
 
-                        <QuizSetForm initialData={{}} courseId={courseId} />
+                        <QuizSetForm initialData={{quizSetId: course?.quizSet}} courseId={courseId} options={mappedQuizSets} />
                     </div>
                     <div className="space-y-6">
                         <div>

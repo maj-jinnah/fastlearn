@@ -14,8 +14,8 @@ const quizSetSchema = new Schema({
     quizIds: [{ type: Schema.ObjectId, ref: "Quiz" }],
     active: {
         required: true,
-        default: false,
         type: Boolean,
+        default: false,
     },
 })
 

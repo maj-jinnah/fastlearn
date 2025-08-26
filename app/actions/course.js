@@ -1,5 +1,6 @@
 'use server';
 
+import { toPlainObject } from "@/lib/convert-data";
 import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Course } from "@/model/course-model";
 import { Lesson } from "@/model/lesson.model";
@@ -82,5 +83,26 @@ export async function deleteCourse(courseId) {
         await session.abortTransaction();
         session.endSession();
         throw new Error(error.message || "Failed to delete course");
+    }
+}
+
+export async function quizSetForCourse(courseId, quizSetId) {
+    try {
+        const result = await Course.findByIdAndUpdate(
+            courseId,
+            { 
+                $addToSet: { quizSet: quizSetId } // Adds only if not already present
+            },
+            { 
+                new: true, // Return updated document
+                runValidators: true 
+            }
+        );
+
+        if (!result) throw new Error("Course not found");
+
+        return toPlainObject(result);
+    } catch (error) {
+        throw new Error(`Failed to add quizSet to course: ${error.message}`);
     }
 }

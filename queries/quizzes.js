@@ -1,13 +1,16 @@
-import { replaceMongoIdInArray, toPlainObject } from "@/lib/convert-data";
+import { toPlainObject } from "@/lib/convert-data";
 import { QuizSet } from "@/model/quizset-model";
 import { Quiz } from "@/model/quizzes-model";
 
 
-export async function getAllQuizSets() {
+export async function getAllQuizSets(filter) {
     try {
-        const quizSets = await QuizSet.find({})
-            .lean();
-        // return replaceMongoIdInArray(quizSets);
+        let quizSets = [];
+        if (filter) {
+            quizSets = await QuizSet.find({ active: true }).lean();
+        } else {
+            quizSets = await QuizSet.find({}).lean();
+        }
         return toPlainObject(quizSets);
     } catch (error) {
         throw new Error(error)
@@ -28,7 +31,7 @@ export async function getQuizSetById(quizSetId) {
     }
 }
 
-export async function createQuiz(data){
+export async function createQuiz(data) {
     try {
         const newQuiz = new Quiz(data);
         await newQuiz.save();
