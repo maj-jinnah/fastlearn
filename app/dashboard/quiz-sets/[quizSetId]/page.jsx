@@ -1,7 +1,8 @@
 import AlertBanner from "@/components/alert-banner";
 import { cn } from "@/lib/utils";
 import { getQuizSetById } from "@/queries/quizzes";
-import { Circle, CircleCheck } from "lucide-react";
+import { ArrowLeft, Circle, CircleCheck } from "lucide-react";
+import Link from "next/link";
 import { AddQuizForm } from "./_components/add-quiz-form";
 import QuizCardAction from "./_components/quiz-card-action";
 import { QuizSetAction } from "./_components/quiz-set-action";
@@ -22,8 +23,27 @@ const EditQuizSet = async ({ params }) => {
                 />
             )}
             <div className="p-6">
-                <div className="flex items-center justify-end">
-                    <QuizSetAction quizSetId={quizSetId} active={quizzes?.active} />
+                <div className="flex items-center justify-between">
+                    {/* <div className="w-full"> */}
+                    <Link
+                        href={`/dashboard/quiz-sets`}
+                        className="flex items-center text-sm hover:opacity-75 transition mb-6"
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Back to quiz sets
+                    </Link>
+                    {/* <div className="flex items-center justify-end"> */}
+                    <QuizSetAction
+                        quizSetId={quizSetId}
+                        active={quizzes?.active}
+                    />
+                    {/* </div> */}
+                    {/* </div> */}
+
+                    {/* <QuizSetAction
+                        quizSetId={quizSetId}
+                        active={quizzes?.active}
+                    /> */}
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2  gap-6 mt-16">
                     {/* Quiz List */}

@@ -2,7 +2,7 @@
 
 import { Trash } from "lucide-react";
 
-import { changeQuizSetPublishState } from "@/app/actions/quiz";
+import { changeQuizSetPublishState, deleteQuizSet } from "@/app/actions/quiz";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,13 +26,14 @@ export const QuizSetAction = ({ quizSetId, active }) => {
                     break;
 
                 case "delete":
-                    // if (published) {
-                    //     toast.error("You can't delete a published quiz set");
-                    // } else {
-                    //    await deleteQuizSet(quizSetId);
-                    //     toast.success("Quiz Set successfully deleted");
-                    //     router.refresh();
-                    // }
+                    if (published) {
+                        toast.error("You can't delete a published quiz set");
+                    } else {
+                       await deleteQuizSet(quizSetId);
+                        toast.success("Quiz Set successfully deleted");
+                        // router.refresh();
+                        router.push("/dashboard/quiz-sets");
+                    }
                     break;
 
                 default:
