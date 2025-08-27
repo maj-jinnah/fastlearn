@@ -133,3 +133,79 @@ export async function deleteQuizSet(quizSetId) {
         await session.endSession();
     }
 }
+
+export async function deleteQuiz(quizSetId, quizId) {
+    const session = await mongoose.startSession();
+    
+    try {
+        return await session.withTransaction(async () => {
+            // Step 1: Verify quiz exists and get details
+            const quiz = await Quiz.findById(quizId).session(session);
+            if (!quiz) {
+                throw new Error("Quiz not found");
+            }
+
+            // Step 2: Verify quizSet exists and contains this quiz (in one operation)
+            const quizSet = await QuizSet.findOne({
+                _id: quizSetId,
+                quizIds: quizId
+            }).session(session);
+
+            if (!quizSet) {
+                throw new Error("QuizSet not found or quiz doesn't belong to this QuizSet");
+            }
+
+            // Step 3: Delete quiz and remove from quizSet simultaneously
+            await Promise.all([
+                Quiz.findByIdAndDelete(quizId, { session }),
+                QuizSet.findByIdAndUpdate(
+                    quizSetId,
+                    { $pull: { quizIds: quizId } },
+                    { session }
+                )
+            ]);
+
+            return { 
+                success: true, 
+                message: "Quiz deleted successfully",
+            };
+        });
+
+    } catch (error) {
+        // console.error('Delete quiz transaction failed:', error);
+        throw new Error(error.message || 'Failed to delete quiz');
+    } finally {
+        await session.endSession();
+    }
+}
+
+export async function updateQuiz(quizId, data) {
+    try {
+        const quiz = await Quiz.findById(quizId);
+        if (!quiz) {
+            throw new Error('Quiz not found');
+        }
+
+        const transformQuizData = {
+            title: data.title,
+            description: data.description,
+            slug: getSlug(data.title),
+            options: ["A", "B", "C", "D"].map((letter) => ({
+                text: data[`option${letter}`].label,
+                is_correct: data[`option${letter}`].isTrue,
+            })),
+        };
+
+        const updatedQuiz = await Quiz.findByIdAndUpdate(
+            quizId,
+            transformQuizData,
+            { new: true }
+        );
+        if (!updatedQuiz) {
+            throw new Error('Quiz not found');
+        }
+        return toPlainObject(updatedQuiz);
+    } catch (error) {
+        throw new Error(error.message || "Failed to update quiz");
+    }
+}

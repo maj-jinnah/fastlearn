@@ -1,23 +1,28 @@
 "use client";
 
+import { deleteQuiz } from "@/app/actions/quiz";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const QuizCardAction = ({ quiz, quizSetId }) => {
+const QuizCardAction = ({ quiz, quizSetId, setEditQuiz }) => {
     const [action, setAction] = useState(null);
     const router = useRouter();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             switch (action) {
                 case "edit-quiz":
+                    setEditQuiz(quiz);
                     break;
                 case "delete-quiz":
+                    await deleteQuiz(quizSetId, quiz?._id);
+                    toast.success("Quiz successfully deleted");
+                    router.refresh();
                     break;
                 default:
                     throw new Error("Invalid action");

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-
+import { addQuizToQuizSet, updateQuiz } from "@/app/actions/quiz";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { addQuizToQuizSet } from "@/app/actions/quiz";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     title: z
@@ -77,40 +77,70 @@ const formSchema = z.object({
     }),
 });
 
-export const AddQuizForm = ({ quizSetId }) => {
+const mapInitialData = (data) => {
+    if (!data) {
+        return {
+            title: "",
+            description: "",
+            optionA: { label: "", isTrue: false },
+            optionB: { label: "", isTrue: false },
+            optionC: { label: "", isTrue: false },
+            optionD: { label: "", isTrue: false },
+        };
+    }
+
+    const optionKeys = ["optionA", "optionB", "optionC", "optionD"];
+    const optionsObj = optionKeys.reduce((acc, key, index) => {
+        acc[key] = {
+            label: data.options?.[index]?.text || "",
+            isTrue: data.options?.[index]?.is_correct || false,
+        };
+        return acc;
+    }, {});
+
+    return {
+        title: data.title || "",
+        description: data.description || "",
+        ...optionsObj,
+    };
+};
+
+export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
     const router = useRouter();
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         mode: "all",
-        defaultValues: {
-            title: "",
-            description: "",
-            optionA: {
-                label: "",
-                isTrue: false,
-            },
-            optionB: {
-                label: "",
-                isTrue: false,
-            },
-            optionC: {
-                label: "",
-                isTrue: false,
-            },
-            optionD: {
-                label: "",
-                isTrue: false,
-            },
-        },
+        defaultValues: mapInitialData(initialData),
     });
 
-    const { isSubmitting, isValid, errors } = form.formState;
-    // console.log(errors);
+    const { isSubmitting, isValid, errors, isDirty } = form.formState;
+    const isEditing = !!initialData?._id;
+    const shouldShowActions = isEditing || isDirty;
+
+
+    function resetForm() {
+        form.reset({
+            title: "",
+            description: "",
+            optionA: { label: "", isTrue: false },
+            optionB: { label: "", isTrue: false },
+            optionC: { label: "", isTrue: false },
+            optionD: { label: "", isTrue: false },
+        });
+    }
+
+    useEffect(() => {
+        if (initialData) {
+            form.reset(mapInitialData(initialData));
+        }
+    }, [initialData, form]);
 
     const onSubmit = async (values) => {
+
+        console.log("form values --- ", values);
+
         try {
-            console.log({ values });
             const correctness = [
                 values.optionA.isTrue,
                 values.optionB.isTrue,
@@ -119,39 +149,34 @@ export const AddQuizForm = ({ quizSetId }) => {
             ];
             const correctMarked = correctness.filter((val) => val === true);
 
-            if (correctMarked.length >= 1) {
-                const response = await addQuizToQuizSet(quizSetId, values);
-                // Reset the form
-                form.reset({
-                    title: "",
-                    description: "",
-                    optionA: {
-                        label: "",
-                        isTrue: false,
-                    },
-                    optionB: {
-                        label: "",
-                        isTrue: false,
-                    },
-                    optionC: {
-                        label: "",
-                        isTrue: false,
-                    },
-                    optionD: {
-                        label: "",
-                        isTrue: false,
-                    },
-                });
-                toast.success("Quiz created successfully");
-                router.refresh();
-            } else {
+            if (correctMarked.length < 1) {
                 return toast.error(
                     "Please mark at least one option as correct"
                 );
             }
+
+            if (initialData?._id) {
+                // 📝 Edit existing quiz
+                  const response = await updateQuiz(initialData?._id, values);
+                toast.success("Quiz updated successfully");
+                resetForm();
+            } else {
+                // ➕ Create new quiz
+                const response = await addQuizToQuizSet(quizSetId, values);
+                toast.success("Quiz created successfully");
+                resetForm();
+            }
+
+            router.refresh();
         } catch (error) {
-            toast.error("Something went wrong");
+            // console.error(error);
+            toast.error(error.message || "Something went wrong");
         }
+    };
+
+    const onClose = () => {
+        resetForm();
+        setEditQuiz(null);
     };
 
     return (
@@ -375,11 +400,19 @@ export const AddQuizForm = ({ quizSetId }) => {
                         </div>
                         {/* --------------- OPTION D ENDS -------- */}
 
-                        <div className="flex items-center justify-end gap-x-2">
-                            <Button disabled={isSubmitting} type="submit">
-                                Save
-                            </Button>
-                        </div>
+                        {shouldShowActions && (
+                            <div className="flex items-center justify-end gap-x-2">
+                                <Button
+                                    type="button"
+                                    onClick={onClose}
+                                >
+                                    {isEditing ? "Cancel Edit" : "Clear Form"}
+                                </Button>
+                                <Button disabled={isSubmitting} type="submit">
+                                    Save
+                                </Button>
+                            </div>
+                        )}
                     </form>
                 </Form>
             }
