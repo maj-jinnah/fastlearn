@@ -20,7 +20,7 @@ export const ModuleActions = ({ module, courseId }) => {
             switch (action) {
                 case "change-active":
                     const res = await changeModulePublishState(module?._id);
-                    console.log('response ---', res);
+                    // console.log('response ---', res);
                     setPublished(!published);
                     toast.success("Module has been updated");
                     router.refresh();

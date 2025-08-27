@@ -1,12 +1,11 @@
 import AlertBanner from "@/components/alert-banner";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getQuizSetById } from "@/queries/quizzes";
-import { Circle, CircleCheck, Pencil, Trash } from "lucide-react";
+import { Circle, CircleCheck } from "lucide-react";
 import { AddQuizForm } from "./_components/add-quiz-form";
+import QuizCardAction from "./_components/quiz-card-action";
 import { QuizSetAction } from "./_components/quiz-set-action";
 import { TitleForm } from "./_components/title-form";
-import QuizCardAction from "./_components/quiz-card-action";
 
 const EditQuizSet = async ({ params }) => {
     const { quizSetId } = await params;
@@ -16,13 +15,15 @@ const EditQuizSet = async ({ params }) => {
     // console.log("quiz --- ", quizzes);
     return (
         <>
-            <AlertBanner
-                label="This course is unpublished. It will not be visible in the course."
-                variant="warning"
-            />
+            {quizzes?.active === false && (
+                <AlertBanner
+                    label="This course is unpublished. It will not be visible in the course."
+                    variant="warning"
+                />
+            )}
             <div className="p-6">
                 <div className="flex items-center justify-end">
-                    <QuizSetAction />
+                    <QuizSetAction quizSetId={quizSetId} active={quizzes?.active} />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2  gap-6 mt-16">
                     {/* Quiz List */}
@@ -42,9 +43,7 @@ const EditQuizSet = async ({ params }) => {
                                         key={quiz._id}
                                         className=" bg-gray-50 shadow-md p-4 lg:p-6 rounded-md border"
                                     >
-                                        <h2 className="mb-3">
-                                            {quiz?.title}
-                                        </h2>
+                                        <h2 className="mb-3">{quiz?.title}</h2>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             {quiz?.options.map(
@@ -62,14 +61,19 @@ const EditQuizSet = async ({ params }) => {
                                                                 <Circle className="size-4" />
                                                             )}
 
-                                                            <p>{option?.text}</p>
+                                                            <p>
+                                                                {option?.text}
+                                                            </p>
                                                         </div>
                                                     );
                                                 }
                                             )}
                                         </div>
                                         <div className="flex items-center justify-end gap-2 mt-6">
-                                            <QuizCardAction quiz={quiz} quizSetId={quizSetId} />
+                                            <QuizCardAction
+                                                quiz={quiz}
+                                                quizSetId={quizSetId}
+                                            />
                                         </div>
                                     </div>
                                 );

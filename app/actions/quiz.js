@@ -60,3 +60,24 @@ export async function createQuizSet(data) {
         throw new Error(error);
     }
 }
+
+export async function changeQuizSetPublishState(quizSetId) {
+    try {
+        // Find the quiz set by ID
+        const quizSet = await QuizSet.findById(quizSetId);
+        if (!quizSet) {
+            throw new Error('Quiz set not found');
+        }
+
+        // Toggle the isPublished field
+        const changedQuizSet = await QuizSet.findByIdAndUpdate(
+            quizSetId,
+            { active: !quizSet.active },
+            { new: true }
+        );
+
+        return toPlainObject(changedQuizSet);
+    } catch (error) {
+        throw new Error(error);
+    }
+}
