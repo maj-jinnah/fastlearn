@@ -41,7 +41,7 @@ const CourseDetailsIntro = async ({ course }) => {
                             <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
                                 {isEnrolled ? (
                                     <Link
-                                        href=""
+                                        href={`/courses/${course._id.toString()}/lesson`}
                                         className={cn(
                                             buttonVariants({
                                                 size: "lg",

@@ -64,7 +64,7 @@ const CourseCard = async ({ course }) => {
 
                 {isEnrolled ? (
                     <Link
-                        href=""
+                        href={`/courses/${course._id.toString()}/lesson`}
                         className={cn(
                             buttonVariants({
                                 size: "sm",
