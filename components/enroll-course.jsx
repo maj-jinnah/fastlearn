@@ -3,12 +3,35 @@
 import { createCheckoutSession } from "@/app/actions/stripe";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 
-export const EnrollCourse = ({ asLink, courseId, courseTitle, coursePrice, description }) => {
-    
+export const EnrollCourse = ({
+    asLink,
+    courseId,
+    courseTitle,
+    coursePrice,
+    description,
+    session,
+}) => {
+    if (!session) {
+        return (
+            <Link
+                href="/login"
+                className={cn(
+                    buttonVariants({
+                        size: "lg",
+                    })
+                )}
+            >
+                Enroll
+                <ArrowRight className="w-3" />
+            </Link>
+        );
+    }
+
     const formAction = async (data) => {
-        const {url} = await createCheckoutSession(data);
+        const { url } = await createCheckoutSession(data);
         window.location.assign(url);
     };
 

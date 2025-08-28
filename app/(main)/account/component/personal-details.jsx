@@ -39,7 +39,7 @@ const PersonalDetails = ({ userInfo }) => {
             }
         } catch (error) {
             console.error("Error updating user information:", error);
-            toast.error("An error occurred while updating user information.");
+            toast.error( error.message || "An error occurred while updating user information.");
         } finally {
             setIsLoading(false);
         }

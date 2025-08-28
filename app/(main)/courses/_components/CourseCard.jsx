@@ -89,6 +89,7 @@ const CourseCard = async ({ course }) => {
                         coursePrice={course.price}
                         description={course.description}
                         asLink={true}
+                        session={session}
                     />
                 )}
             </div>

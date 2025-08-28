@@ -11,9 +11,10 @@ import { redirect } from "next/navigation";
 const CourseDetailsIntro = async ({ course }) => {
     const { title, thumbnail, subtitle } = course;
     const session = await auth();
-    if (!session) {
-        redirect("/login");
-    }
+
+    // if (!session) {
+    //     redirect("/login");
+    // }
 
     const loggedInUser = await getUserByEmail(session?.user?.email);
 
@@ -57,6 +58,7 @@ const CourseDetailsIntro = async ({ course }) => {
                                         coursePrice={course.price}
                                         description={course.description}
                                         asLink={false}
+                                        session={session}
                                     />
                                 )}
 
