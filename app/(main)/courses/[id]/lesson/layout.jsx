@@ -12,7 +12,7 @@ const CourseLayout = async ({ children, params }) => {
         redirect("/login");
     }
 
-    const isEnrolled = await hasEnrollForCourse(loggedInUser._id, id);
+    const isEnrolled = await hasEnrollForCourse(loggedInUser?._id, id);
     if (!isEnrolled) {
         redirect(`/courses`);
     }
