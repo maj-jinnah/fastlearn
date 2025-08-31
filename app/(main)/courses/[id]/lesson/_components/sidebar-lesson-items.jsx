@@ -11,6 +11,9 @@ const SidebarLessonItems = ({ lesson, module, courseId }) => {
         return lesson?.state === "completed";
     };
 
+    // console.log("lesson in sidebar", lesson);
+    console.log("lesson in sidebar",lesson, isPrivate(lesson), isCompleted(lesson));
+
     return (
         <>
             <Link
@@ -30,7 +33,7 @@ const SidebarLessonItems = ({ lesson, module, courseId }) => {
                 <div className="flex items-center gap-x-2">
                     {isPrivate(lesson) ? (
                     <Lock size={16} className={cn("text-slate-700")} />
-                ) : isComplete(lesson) ? (
+                ) : isCompleted(lesson) ? (
                     <CheckCircle size={16} className={cn("text-emerald-700")} />
                 ) : (
                     <PlayCircle size={16} className={cn("text-slate-700")} />

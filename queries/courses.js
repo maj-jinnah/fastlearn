@@ -125,3 +125,42 @@ export async function create(courseData) {
         throw new Error(error)
     }
 }
+
+export async function getCourseDetailsByIdForWatch(id) {
+    try {
+        const course = await Course.findById(id)
+        // .populate({
+        //     path: 'category',
+        //     model: Category,
+        // })
+        // .populate({
+        //     path: 'instructor',
+        //     select: ' -password',
+        //     model: User,
+        // })
+        .populate({
+            path: 'modules',
+            model: Module,
+            match: { active: true },
+            populate: {
+                path: 'lessonIds',
+                model: Lesson,
+                match: { active: true },
+            },
+        })
+        // .populate({
+        //     path: 'testimonials',
+        //     model: Testimonial,
+        //     populate: {
+        //         path: 'user',
+        //         model: User,
+        //         select: 'firstName lastName email profilePicture ',
+        //     },
+        // })
+        .lean();
+
+    return toPlainObject(course);
+    } catch (error) {
+        throw new Error(error)
+    }
+}

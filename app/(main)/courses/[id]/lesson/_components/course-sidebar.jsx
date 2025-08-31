@@ -1,30 +1,39 @@
 import { CourseProgress } from "@/components/course-progress";
 import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Watch } from "@/model/watch-model";
-import { getCourseDetailsById } from "@/queries/courses";
+import { getCourseDetailsByIdForWatch } from "@/queries/courses";
 import DownloadCertificate from "./download-certificate";
 import GiveReview from "./give-review";
 import SidebarModules from "./sidebar-modules";
 
 export const CourseSidebar = async ({ courseId }) => {
-    const course = await getCourseDetailsById(courseId);
+    const course = await getCourseDetailsByIdForWatch(courseId);
     const loggedInUser = await getLoggedInUser();
 
-    const updatedModules =  await Promise.all(course?.modules.map(async(module) => {
-        const moduleId = module?._id;
-        const lessonIds = module?.lessonIds;;
+    const updatedModules = await Promise.all(
+        course?.modules.map(async (module) => {
+            const moduleId = module?._id;
+            const lessonIds = module?.lessonIds;
 
-        const updatedLessons = await Promise.all(lessonIds.map(async(lesson) => {
-            const lessonId = lesson?._id;
+            const updatedLessons = await Promise.all(
+                lessonIds.map(async (lesson) => {
+                    const lessonId = lesson?._id;
 
-            const watch = await Watch.findOne({ lesson: lessonId, user: loggedInUser?._id, module: moduleId }).lean();
-            if(watch?.state === 'completed') {
-                lesson.state = 'completed';
-            }
-            return lesson;
-        }))
-        return module;
-    }))
+                    const watch = await Watch.findOne({
+                        lesson: lessonId,
+                        user: loggedInUser?._id,
+                        module: moduleId,
+                    }).lean();
+                    if (watch?.state === "completed") {
+                        lesson.state = "completed";
+                    }
+                    return lesson;
+                })
+            );
+            return module;
+        })
+    );
+
 
     return (
         <>
@@ -36,7 +45,7 @@ export const CourseSidebar = async ({ courseId }) => {
                     </div>
                 </div>
                 <SidebarModules modules={updatedModules} courseId={courseId} />
-                <div className="w-full px-6">
+                <div className="w-full px-6 pb-8">
                     <DownloadCertificate courseId={courseId} />
                     <GiveReview courseId={courseId} />
                 </div>
