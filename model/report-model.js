@@ -1,9 +1,10 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const reportSchema = new Schema({
-  totalCompletedLessons : {
-      required: true,
-      type: Array,
+
+  totalCompletedLessons: {
+    required: true,
+    type: Array,
   },
 
   totalCompletedModules: {
@@ -14,7 +15,7 @@ const reportSchema = new Schema({
   course: { type: Schema.ObjectId, ref: "Course" },
 
   student: { type: Schema.ObjectId, ref: "User" },
-  
+
   quizAssessment: { type: Schema.ObjectId, ref: "Assessment" },
 });
 

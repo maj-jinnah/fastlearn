@@ -1,15 +1,15 @@
+import { toPlainObject } from "@/lib/convert-data";
 import { Category } from "@/model/category-model";
 import { Course } from "@/model/course-model";
+import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { Testimonial } from "@/model/testimonial-model";
 import { User } from "@/model/user-model";
 import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
-import { toPlainObject } from "@/lib/convert-data";
-import { Lesson } from "@/model/lesson.model";
 
 export async function getCourseList() {
-    const courses = await Course.find({active:true})
+    const courses = await Course.find({ active: true })
         .select('title description thumbnail price active category instructor modules testimonials')
         .populate({
             path: 'category',
@@ -129,38 +129,54 @@ export async function create(courseData) {
 export async function getCourseDetailsByIdForWatch(id) {
     try {
         const course = await Course.findById(id)
-        // .populate({
-        //     path: 'category',
-        //     model: Category,
-        // })
-        // .populate({
-        //     path: 'instructor',
-        //     select: ' -password',
-        //     model: User,
-        // })
+            // .populate({
+            //     path: 'category',
+            //     model: Category,
+            // })
+            // .populate({
+            //     path: 'instructor',
+            //     select: ' -password',
+            //     model: User,
+            // })
+            .populate({
+                path: 'modules',
+                model: Module,
+                match: { active: true },
+                populate: {
+                    path: 'lessonIds',
+                    model: Lesson,
+                    match: { active: true },
+                },
+            })
+            // .populate({
+            //     path: 'testimonials',
+            //     model: Testimonial,
+            //     populate: {
+            //         path: 'user',
+            //         model: User,
+            //         select: 'firstName lastName email profilePicture ',
+            //     },
+            // })
+            .lean();
+
+        return toPlainObject(course);
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export function courseLessons(courseId) {
+    return Course.findById(courseId)
+        .select('modules title')
         .populate({
             path: 'modules',
             model: Module,
-            match: { active: true },
+            select: 'lessonIds title',
             populate: {
                 path: 'lessonIds',
                 model: Lesson,
                 match: { active: true },
             },
         })
-        // .populate({
-        //     path: 'testimonials',
-        //     model: Testimonial,
-        //     populate: {
-        //         path: 'user',
-        //         model: User,
-        //         select: 'firstName lastName email profilePicture ',
-        //     },
-        // })
         .lean();
-
-    return toPlainObject(course);
-    } catch (error) {
-        throw new Error(error)
-    }
 }

@@ -2,8 +2,16 @@ import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Watch } from "@/model/watch-model";
 import { getLesson } from "@/queries/lessons";
 import { getModuleBySlug } from "@/queries/modules";
+import { createWatchReport } from "@/queries/reports";
 import { NextResponse } from "next/server";
 
+async function updateReport(userId, courseId, moduleId, lessonId) {
+    try {
+        await createWatchReport({ userId, courseId, moduleId, lessonId });
+    } catch (error) {
+        throw new Error(error)
+    }
+};
 
 export async function POST(request) {
     try {
@@ -50,17 +58,19 @@ export async function POST(request) {
         } else if (state === 'completed') {
             if (!watch) {
                 await Watch.create(watchData);
+                await updateReport(loggedInUser?._id, courseId, foundModule?._id, lessonId,);
             } else {
                 if (watch.state === 'started') {
                     await Watch.findByIdAndUpdate(watch._id, {
                         state: "completed"
                     });
+                    await updateReport(loggedInUser?._id, courseId, foundModule?._id, lessonId,);
                 }
             }
         }
 
         return new NextResponse(JSON.stringify({ message: 'Watch state updated successfully' }), { status: 200 });
     } catch (error) {
-        throw new error(error)
+        throw new Error(error)
     }
-}
+};

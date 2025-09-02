@@ -1,4 +1,5 @@
 import { CourseProgress } from "@/components/course-progress";
+import { getProgress } from "@/lib/get-progress";
 import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Watch } from "@/model/watch-model";
 import { getCourseDetailsByIdForWatch } from "@/queries/courses";
@@ -34,6 +35,7 @@ export const CourseSidebar = async ({ courseId }) => {
         })
     );
 
+    const progress = await getProgress(courseId);
 
     return (
         <>
@@ -41,7 +43,7 @@ export const CourseSidebar = async ({ courseId }) => {
                 <div className="p-8 flex flex-col border-b">
                     <h1 className="font-semibold">Reactive Accelerator</h1>
                     <div className="mt-10">
-                        <CourseProgress variant="success" value={80} />
+                        <CourseProgress variant="success" value={progress} />
                     </div>
                 </div>
                 <SidebarModules modules={updatedModules} courseId={courseId} />

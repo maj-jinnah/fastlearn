@@ -12,7 +12,7 @@ const SidebarLessonItems = ({ lesson, module, courseId }) => {
     };
 
     // console.log("lesson in sidebar", lesson);
-    console.log("lesson in sidebar",lesson, isPrivate(lesson), isCompleted(lesson));
+    // console.log("lesson in sidebar",lesson, isPrivate(lesson), isCompleted(lesson));
 
     return (
         <>

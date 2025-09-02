@@ -1,17 +1,57 @@
 import { Assessment } from "@/model/assessment-model";
+import { Module } from "@/model/module.model";
 import { Report } from "@/model/report-model";
 
 
-export async function getAReport(filter){
+export async function getAReport(filter) {
     try {
         const report = await Report.findOne(filter)
-        .populate({
-            path: 'quizAssessment',
-            model: Assessment,
-        })
-        .lean();
+            .populate({
+                path: 'quizAssessment',
+                model: Assessment,
+            })
+            .lean();
 
         return report
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export async function createWatchReport({ userId, courseId, moduleId, lessonId }) {
+    try {
+        let report = await Report.findOne({
+            student: userId,
+            course: courseId
+        });
+
+        if (!report) {
+            report = await Report.create({
+                student: userId,
+                course: courseId
+            });
+        }
+
+        const foundedLesson = report?.totalCompletedLessons.find((lesson) => lesson.toString() === lessonId);
+        if (!foundedLesson) {
+            report?.totalCompletedLessons.push(lessonId);
+        }
+
+        const foundModule = await Module.findById(moduleId);
+        const lessonToCheck = foundModule?.lessonIds;
+        const completedLessonIds = report?.totalCompletedLessons;
+
+        const isModuleCompleted = lessonToCheck.every((lesson) => completedLessonIds.includes(lesson.toString()));
+
+        if (isModuleCompleted) {
+            const foundedModule = report?.totalCompletedModules.find((module) => module.toString() === moduleId);
+
+            if (!foundedModule) {
+                report?.totalCompletedModules.push(moduleId);
+            }
+        }
+
+        await report.save();
     } catch (error) {
         throw new Error(error)
     }
