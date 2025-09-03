@@ -23,7 +23,7 @@ export async function getCourseList() {
         })
         .populate({
             path: 'modules',
-            select: 'title description status slug course lessonIds -_id',
+            select: 'title description status slug course active lessonIds -_id',
             model: Module,
         })
         .populate({

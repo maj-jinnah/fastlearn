@@ -7,8 +7,9 @@ import { Video } from "lucide-react";
 import CourseLessonList from "./CourseLessonList";
 
 const CourseModuleList = ({ module }) => {
+    // console.log("Module: ", module);
     return (
-        <AccordionItem className="border-none" value="item-1">
+        <AccordionItem className="border-none" value={module?._id}>
             <AccordionTrigger>{module?.title}</AccordionTrigger>
             <AccordionContent>
                 {/* header */}

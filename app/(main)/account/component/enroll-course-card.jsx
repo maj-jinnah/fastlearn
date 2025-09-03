@@ -1,5 +1,6 @@
 import { CourseProgress } from "@/components/course-progress";
 import { Badge } from "@/components/ui/badge";
+import { getProgress } from "@/lib/get-progress";
 import { getCategoryById } from "@/queries/categories";
 import { getAReport } from "@/queries/reports";
 import { BookOpen } from "lucide-react";
@@ -37,6 +38,8 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
 
     // console.log("Total Marks: ", totalMarks);
     // console.log('other marks ---', otherMarks)
+
+    const progress = await getProgress(enrolledCourse?.course?._id.toString());
 
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
@@ -111,7 +114,7 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
 
                 <CourseProgress
                     size="sm"
-                    value={(totalCompletedModules / totalModuleCount) * 100 || 0}
+                    value={progress}
                     variant={110 === 100 ? "success" : ""}
                 />
             </div>

@@ -1,9 +1,13 @@
 import { Accordion } from "@/components/ui/accordion";
+import { secondsToHourMinute } from "@/lib/time-to-seconds";
+import { getCourseDetailsByIdForWatch } from "@/queries/courses";
 import { BookCheck, Clock10 } from "lucide-react";
 import CourseModuleList from "./CourseModuleList";
-import { secondsToHourMinute } from "@/lib/time-to-seconds";
 
-const CourseCurriculum = ({ course }) => {
+const CourseCurriculum = async ({ courseId }) => {
+    const course = await getCourseDetailsByIdForWatch(courseId);
+    // console.log("Course : ", course);
+
     const totalDurationSeconds =
         course?.modules
             ?.map((module) =>
@@ -38,7 +42,7 @@ const CourseCurriculum = ({ course }) => {
 
             {/* contents */}
             <Accordion
-                defaultValue={["item-1", "item-2", "item-3"]}
+                defaultValue={course?.modules[0]?._id}
                 type="multiple"
                 // collapsible
                 collapsible="true"

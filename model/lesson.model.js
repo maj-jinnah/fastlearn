@@ -30,7 +30,7 @@ const lessonSchema = new Schema({
   },
   access: {
     required: true,
-    default: 'private',
+    default: 'public',
     type: String
   },
   order :{

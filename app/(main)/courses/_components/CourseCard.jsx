@@ -3,6 +3,7 @@ import { CourseProgress } from "@/components/course-progress";
 import { EnrollCourse } from "@/components/enroll-course";
 import { buttonVariants } from "@/components/ui/button";
 import { formatPrice } from "@/lib/formatPrice";
+import { getProgress } from "@/lib/get-progress";
 import { cn } from "@/lib/utils";
 import { hasEnrollForCourse } from "@/queries/enrollments";
 import { getUserByEmail } from "@/queries/user";
@@ -16,8 +17,11 @@ const CourseCard = async ({ course }) => {
     const loggedInUser = await getUserByEmail(session?.user?.email);
     const isEnrolled = await hasEnrollForCourse(
         loggedInUser?._id.toString(),
-        course?._id.toString()
+        course?._id
     );
+
+    const totalChapter =  course?.modules.filter(m => m.active).length;
+    const progress = await getProgress(course?._id);
 
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
@@ -29,6 +33,7 @@ const CourseCard = async ({ course }) => {
                             alt={"course"}
                             className="object-cover"
                             fill
+                            sizes="100%"
                         />
                     </div>
                     <div className="flex flex-col pt-2">
@@ -43,13 +48,14 @@ const CourseCard = async ({ course }) => {
                                 <div>
                                     <BookOpen className="w-4" />
                                 </div>
-                                <span>{course?.modules.length} Chapters</span>
+                                {/* <span>{course?.modules.length} Chapters</span> */}
+                                <span>{totalChapter} Chapters</span>
                             </div>
                         </div>
 
                         <CourseProgress
                             size="sm"
-                            value={80}
+                            value={progress}
                             variant={110 === 100 ? "success" : ""}
                         />
                     </div>

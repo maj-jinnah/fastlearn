@@ -75,7 +75,7 @@ const CourseDetails = ({ course }) => {
                         </TabsContent>
 
                         <TabsContent value="curriculum">
-                            <CourseCurriculum course={course} />
+                            <CourseCurriculum courseId={course?._id} />
                         </TabsContent>
 
                         <TabsContent value="instructor">
