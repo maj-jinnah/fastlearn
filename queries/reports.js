@@ -60,10 +60,10 @@ export async function createWatchReport({ userId, courseId, moduleId, lessonId }
         const completedModule = report.totalCompletedModules;
         const completedModuleCount = completedModule?.length ?? 0;
 
-        console.log(moduleCount, completedModuleCount);
+        // console.log(moduleCount, completedModuleCount);
 
         if (completedModuleCount >= 1 && completedModuleCount === moduleCount) {
-            console.log("Course completed");
+            // console.log("Course completed");
             report.completion_date = Date.now();
         }
 
