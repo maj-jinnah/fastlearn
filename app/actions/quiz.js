@@ -1,10 +1,13 @@
 'use server';
 
 import { getSlug, toPlainObject } from "@/lib/convert-data";
+import { getLoggedInUser } from "@/lib/loggedin-user";
+import { Assessment } from "@/model/assessment-model";
 import { Course } from "@/model/course-model";
 import { QuizSet } from "@/model/quizset-model";
 import { Quiz } from "@/model/quizzes-model";
-import { createQuiz } from "@/queries/quizzes";
+import { createQuiz, getQuizSetById } from "@/queries/quizzes";
+import { createAssessmentReport } from "@/queries/reports";
 import mongoose from "mongoose";
 
 export async function updateQuizSet(quizSetId, data) {
@@ -87,7 +90,7 @@ export async function changeQuizSetPublishState(quizSetId) {
 
 export async function deleteQuizSet(quizSetId) {
     const session = await mongoose.startSession();
-    
+
     try {
         return await session.withTransaction(async () => {
             // Step 1: Find the quizSet
@@ -124,11 +127,11 @@ export async function deleteQuizSet(quizSetId) {
             //     updatedCourses: courseUpdateResult.modifiedCount
             // };
 
-            return { success: true, message: "QuizSet and related quizzes deleted successfully"}
+            return { success: true, message: "QuizSet and related quizzes deleted successfully" }
         });
 
     } catch (error) {
-        throw new Error(`Transaction failed: ${error.message}`  || 'Failed to delete quiz set');
+        throw new Error(`Transaction failed: ${error.message}` || 'Failed to delete quiz set');
     } finally {
         await session.endSession();
     }
@@ -136,7 +139,7 @@ export async function deleteQuizSet(quizSetId) {
 
 export async function deleteQuiz(quizSetId, quizId) {
     const session = await mongoose.startSession();
-    
+
     try {
         return await session.withTransaction(async () => {
             // Step 1: Verify quiz exists and get details
@@ -165,8 +168,8 @@ export async function deleteQuiz(quizSetId, quizId) {
                 )
             ]);
 
-            return { 
-                success: true, 
+            return {
+                success: true,
                 message: "Quiz deleted successfully",
             };
         });
@@ -207,5 +210,56 @@ export async function updateQuiz(quizId, data) {
         return toPlainObject(updatedQuiz);
     } catch (error) {
         throw new Error(error.message || "Failed to update quiz");
+    }
+}
+
+export async function addQuizAssessment(courseId, quizSetId, answers) {
+    try {
+        const quizSet = await getQuizSetById(quizSetId);
+        const quizzes = quizSet.quizIds;
+        const assessmentRecord = quizzes.map((quiz, index) => {
+            const obj = {};
+            obj['quizId'] = quiz?._id;
+
+            const found = answers.find(ans => ans.quizId === quiz?._id);
+            if (found) {
+                obj['attempted'] = true;
+            } else {
+                obj['attempted'] = false;
+            }
+
+            const mergedOptions = quiz?.options.map((option) => {
+                return {
+                    option: option?.text,
+                    isCorrect: option?.is_correct,
+                    isSelect: (function () {
+                        const found = answers.find(ans => ans?.option?.label === option?.text);
+                        if (found) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })()
+                }
+            })
+            obj['options'] = mergedOptions;
+            return obj;
+        })
+
+        const assessmentEntry = {};
+        assessmentEntry.assessments = assessmentRecord;
+        assessmentEntry.otherMarks = 0;
+
+        const assessment = await Assessment.create(assessmentEntry)
+        const loggedInUser = await getLoggedInUser();
+
+        await createAssessmentReport({
+            courseId: courseId,
+            userId: loggedInUser?._id,
+            assessmentId: assessment?._id
+        })
+
+    } catch (error) {
+        throw new Error(error.message || "Failed to add quiz assessment");
     }
 }

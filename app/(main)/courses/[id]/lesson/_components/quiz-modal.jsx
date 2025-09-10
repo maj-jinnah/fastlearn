@@ -1,153 +1,329 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useState } from "react";
-function QuizModal({ quizes }) {
-  const [open, setOpen] = useState(false);
-  const totalQuizes = quizes?.length;
-  const [quizIndex, setQuizIndex] = useState(0);
-  const lastQuizIndex = totalQuizes - 1;
-  const currentQuiz = quizes[quizIndex];
+"use client"
 
-  // change quiz
-  const quizChangeHanlder = (type) => {
-    const nextQuizIndex = quizIndex + 1;
-    const prevQuizIndex = quizIndex - 1;
-    if (type === "next" && nextQuizIndex <= lastQuizIndex) {
-      console.log("next");
-      return setQuizIndex((prev) => prev + 1);
+import { addQuizAssessment } from "@/app/actions/quiz"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { ArrowLeft, ArrowRight, CheckCircle, Trophy, XCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+
+function QuizModal({ courseId, quizSetId, quizzes, open, setOpen }) {
+  const [quizIndex, setQuizIndex] = useState(0)
+  const totalQuizzes = quizzes?.length ?? 0
+  const lastQuizIndex = totalQuizzes - 1
+  const currentQuiz = quizzes[quizIndex]
+
+  const router = useRouter();
+
+  // answers + UI state
+  const [userAnswers, setUserAnswers] = useState([]) // [{quizId, selected, correct}]
+  const [selectedOptions, setSelectedOptions] = useState([])
+  const [isAnswered, setIsAnswered] = useState(false)
+  const [showExplanation, setShowExplanation] = useState(false)
+
+  // review mode
+  const [isReviewing, setIsReviewing] = useState(false)
+
+  // find saved answer for current quiz
+  const savedAnswer = userAnswers.find((a) => a.quizId === currentQuiz?.id)
+
+  // sync UI state when changing quiz
+  useEffect(() => {
+    if (!currentQuiz) return
+    if (savedAnswer) {
+      setSelectedOptions([savedAnswer.selected])
+      setIsAnswered(true)
+      setShowExplanation(true)
+    } else {
+      setSelectedOptions([])
+      setIsAnswered(false)
+      setShowExplanation(false)
     }
-    if (type === "prev" && prevQuizIndex >= 0) {
-      setQuizIndex((prev) => prev - 1);
+  }, [quizIndex, currentQuiz?.id]) // only runs on quiz change
+
+  // select an option
+  const optionChangeHandler = (option) => {
+    if (isAnswered || savedAnswer) return // prevent changing once answered
+
+    const picked = option.id
+    const correct = option.isCorrect
+
+    setSelectedOptions([picked])
+    setIsAnswered(true)
+    setShowExplanation(true)
+
+    setUserAnswers((prev) => {
+      const filtered = prev.filter((a) => a.quizId !== currentQuiz.id)
+      return [...filtered, { quizId: currentQuiz.id, selected: picked, correct, option }]
+    })
+  }
+
+  // navigate
+  const quizChangeHandler = (type) => {
+    if (type === "prev" && quizIndex > 0) {
+      setQuizIndex((i) => i - 1)
     }
-  };
+    if (type === "next") {
+      if (!savedAnswer) return // block next if unanswered
+      if (quizIndex < lastQuizIndex) {
+        setQuizIndex((i) => i + 1)
+      } else {
+        setIsReviewing(true)
+      }
+    }
+  }
+
+  const handleSubmitQuiz = async () => {
+    try {
+      await addQuizAssessment(courseId, quizSetId, userAnswers)
+      // console.log("final data --- ", finalData);
+      router.refresh()
+      toast.success("Quiz submitted")
+      
+
+      setOpen(false)
+    } catch (error) {
+      console.error("Error submitting quiz:", error)
+      toast.error(error.message || "There is a problem in submitting the quiz.")
+    }
+  }
 
   return (
-    <>
-      <div className="max-w-[270px] bg-white border border-border rounded-md dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-        <div className="flex h-32 items-center justify-center bg-gradient-to-r from-sky-500 to-indigo-500 px-6 text-center">
-          <span className="text-lg font-semibold text-white">
-            Reactive Accelerator: Quiz Set 4.16 : Module 4 Lesson 16 Quiz Set
-          </span>
-        </div>
-        <div className="p-4">
-          <div className="flex items-center justify-between gap-6 text-sm mb-2 font-medium text-gray-700">
-            <span>Total Mark</span>
-            <Badge className="bg-success/20 text-primary hover:bg-success/20">
-              10
-            </Badge>
-          </div>
-          <p className="mb-4 font-normal text-gray-500 dark:text-gray-400 text-sm">
-            Reactive Accelerator: Quiz Set of Module 4 Lesson 16: Lesson 16
-          </p>
-          <Button
-            className="flex gap-2 capitalize border-sky-500 text-sky-500 hover:text-sky-500 hover:bg-sky-500/5 w-full"
-            variant="outline"
-            onClick={() => setOpen(true)}
-          >
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth="0"
-              viewBox="0 0 24 24"
-              className="h-4 w-4"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path fill="none" d="M0 0h24v24H0V0z"></path>
-              <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zm-6.49-5.84c.41-.73 1.18-1.16 1.63-1.8.48-.68.21-1.94-1.14-1.94-.88 0-1.32.67-1.5 1.23l-1.37-.57C11.51 5.96 12.52 5 13.99 5c1.23 0 2.08.56 2.51 1.26.37.6.58 1.73.01 2.57-.63.93-1.23 1.21-1.56 1.81-.13.24-.18.4-.18 1.18h-1.52c.01-.41-.06-1.08.26-1.66zm-.56 3.79c0-.59.47-1.04 1.05-1.04.59 0 1.04.45 1.04 1.04 0 .58-.44 1.05-1.04 1.05-.58 0-1.05-.47-1.05-1.05z"></path>
-            </svg>
-            <span>Participate a Quiz</span>
-          </Button>
-        </div>
-      </div>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[95%] block">
-          <div className="pb-4 border-b border-border text-sm">
-            <span className="text-success inline-block mr-1">
-              {quizIndex + 1} / 2
-            </span>{" "}
-            টি প্রশ্ন
-          </div>
-          <div className="py-4">
-            <h3 className="text-xl font-medium mb-10">
-              <svg
-                className="text-success inline"
-                stroke-width="0"
-                viewBox="0 0 512 512"
-                height="1em"
-                width="1em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill="currentColor"
-                  stroke="currentColor"
-                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-                ></path>
-              </svg>{" "}
-              Reactive Accelerator: Quiz 4.16 - রিয়্যাক্ট কম্পোনেন্টের
-              লাইফসাইকেল কোনটি বা কোনগুলো ?
-            </h3>
-            <span className="text-[10px] block text-end">
-              <svg
-                stroke="currentColor"
-                fill="currentColor"
-                stroke-width="0"
-                version="1.1"
-                viewBox="0 0 16 16"
-                className="text-success inline"
-                height="12"
-                width="12"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M7 4.75c0-0.412 0.338-0.75 0.75-0.75h0.5c0.412 0 0.75 0.338 0.75 0.75v0.5c0 0.412-0.338 0.75-0.75 0.75h-0.5c-0.412 0-0.75-0.338-0.75-0.75v-0.5z"></path>
-                <path d="M10 12h-4v-1h1v-3h-1v-1h3v4h1z"></path>
-                <path d="M8 0c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zM8 14.5c-3.59 0-6.5-2.91-6.5-6.5s2.91-6.5 6.5-6.5 6.5 2.91 6.5 6.5-2.91 6.5-6.5 6.5z"></path>
-              </svg>{" "}
-              একটি প্রশ্নের একাধিক উত্তর হতে পারে & ভুল সিলেকশনে কোন নেগেটিভ
-              মার্কিং নেই
-            </span>
-          </div>
-          <div className="grid md:grid-cols-2 gap-5 mb-6">
-            {currentQuiz?.options.map((option) => (
-              <div key={option.id}>
-                <input
-                  className="opacity-0 invisible absolute [&:checked_+_label]:bg-success/5"
-                  type="checkbox"
-                  id={`option-${option.id}`}
-                />
-                <Label
-                  className="border border-border rounded px-2 py-3 block cursor-pointer hover:bg-gray-50 transition-all font-normal"
-                  htmlFor={`option-${option.id}`}
-                >
-                  {option.label}
-                </Label>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[95%] block max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-white border-0 shadow-2xl">
+        {/* ===================== REVIEW ===================== */}
+        {isReviewing ? (
+          <div className="animate-slideIn">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mb-4 animate-pulse">
+                <Trophy className="w-8 h-8 text-white" />
               </div>
-            ))}
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Review Your Performance
+              </h2>
+              <p className="text-slate-600 mt-2">
+                {userAnswers.filter((ans) => ans.correct).length} out of {totalQuizzes} correct
+              </p>
+            </div>
+
+            <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+              {quizzes.map((quiz, index) => {
+                const userAnswer = userAnswers.find((ans) => ans.quizId === quiz.id)
+                const isCorrect = userAnswer?.correct
+
+                return (
+                  <div
+                    key={quiz.id}
+                    className="group p-6 border-0 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div className="flex items-start gap-3 mb-4">
+                      <div
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          isCorrect ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-slate-800 text-lg leading-relaxed">{quiz.title}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          {isCorrect ? (
+                            <CheckCircle className="w-5 h-5 text-end text-emerald-500" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-end text-red-500" />
+                          )}
+                          <span className={`text-sm font-medium ${isCorrect ? "text-emerald-700" : "text-red-700"}`}>
+                            {isCorrect ? "Correct" : "Incorrect"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-3 mb-4">
+                      {quiz.options.map((opt) => {
+                        const isSelected = userAnswer?.selected === opt.id
+                        let optionClasses =
+                          "relative px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 border-2"
+
+                        if (isSelected && opt.isCorrect) {
+                          optionClasses +=
+                            " bg-gradient-to-r from-emerald-500 to-green-500 text-white border-emerald-500 shadow-lg"
+                        } else if (isSelected && !opt.isCorrect) {
+                          optionClasses +=
+                            " bg-gradient-to-r from-red-500 to-rose-500 text-white border-red-500 shadow-lg"
+                        } else if (!isSelected && opt.isCorrect) {
+                          optionClasses += " bg-emerald-50 border-emerald-300 text-emerald-800"
+                        } else {
+                          optionClasses += " bg-slate-50 border-slate-200 text-slate-600"
+                        }
+
+                        return (
+                          <div key={opt.id} className={optionClasses}>
+                            <div className="flex items-center justify-between">
+                              <span>{opt.label}</span>
+                              {opt.isCorrect && <CheckCircle className="w-4 h-4 text-current" />}
+                              {isSelected && !opt.isCorrect && <XCircle className="w-4 h-4 text-current" />}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {quiz.explanation && (
+                      <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                        <div className="flex items-start gap-2">
+                          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-white text-xs">💡</span>
+                          </div>
+                          <p className="text-blue-800 text-sm leading-relaxed">{quiz.explanation}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            <DialogFooter className="mt-8 flex justify-center">
+              <Button
+                className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                onClick={handleSubmitQuiz}
+              >
+                Submit Quiz Results
+              </Button>
+            </DialogFooter>
           </div>
-          <DialogFooter className="flex gap-4 justify-between w-full sm:justify-between">
-            <Button
-              className="gap-2 rounded-3xl"
-              disabled={quizIndex === 0}
-              onClick={() => quizChangeHanlder("prev")}
-            >
-              <ArrowLeft /> Previous Quiz
-            </Button>
-            <Button
-              className="gap-2 rounded-3xl"
-              disabled={quizIndex >= lastQuizIndex}
-              onClick={() => quizChangeHanlder("next")}
-            >
-              Next Quiz <ArrowRight />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+        ) : (
+          <>
+            {/* ===================== QUIZ ===================== */}
+            <div className="pb-6 border-b border-slate-200">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">{quizIndex + 1}</span>
+                  </div>
+                  <div>
+                    <span className="text-lg font-semibold text-slate-800">Question {quizIndex + 1}</span>
+                    <p className="text-sm text-slate-500">of {totalQuizzes} questions</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  {/* <p className="text-sm text-slate-500">Progress</p> */}
+                  <p className="text-lg font-bold text-indigo-600">
+                    {Math.round(((quizIndex + 1) / totalQuizzes) * 100)}%
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-full bg-slate-200 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${((quizIndex + 1) / totalQuizzes) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="py-8">
+              <DialogTitle className="text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                {currentQuiz?.title}
+              </DialogTitle>
+              <div className="flex items-center gap-2 text-sm text-slate-500 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200">
+                <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
+                There are no negative marks for a wrong answer
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              {currentQuiz?.options.map((option, index) => {
+                const isSelected = selectedOptions.includes(option.id)
+                const isCorrect = option.isCorrect
+
+                let optionClasses =
+                  "group relative border-2 rounded-2xl px-6 py-4 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
+                let feedbackIcon = null
+
+                if (isAnswered) {
+                  if (isSelected && isCorrect) {
+                    optionClasses +=
+                      " bg-gradient-to-r from-emerald-500 to-green-500 text-white border-emerald-500 shadow-xl animate-successPulse"
+                    // feedbackIcon = <CheckCircle className="w-5 h-5 text-end" />
+                  } else if (isSelected && !isCorrect) {
+                    optionClasses += " bg-gradient-to-r from-red-500 to-rose-500 text-white border-red-500 shadow-xl"
+                    // feedbackIcon = <XCircle className="w-5 h-5 text-end" />
+                  } else if (!isSelected && isCorrect) {
+                    optionClasses += " bg-emerald-50 border-emerald-300 text-emerald-800 shadow-lg"
+                    // feedbackIcon = <CheckCircle className="w-5 h-5 text-emerald-600 text-end" />
+                  } else {
+                    optionClasses += " bg-slate-50 border-slate-200 text-slate-600"
+                  }
+                } else {
+                  optionClasses +=
+                    " bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50"
+                }
+
+                return (
+                  <div key={option.id} className="animate-slideIn" style={{ animationDelay: `${index * 100}ms` }}>
+                    <input
+                      type="checkbox"
+                      className="hidden"
+                      id={`option-${option.id}`}
+                      onChange={() => optionChangeHandler(option)}
+                      checked={isSelected}
+                      disabled={isAnswered || !!savedAnswer}
+                      readOnly
+                    />
+                    <Label className={optionClasses} htmlFor={`option-${option.id}`}>
+                      <div className="flex items-center">
+                        <span className="font-medium text-base leading-relaxed">{option.label}</span>
+                        {/* {feedbackIcon && <div className="animate-scaleIn">{feedbackIcon}</div>} */}
+                      </div>
+                      <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border-2 border-current rounded-full flex items-center justify-center text-xs font-bold opacity-60 group-hover:opacity-100 transition-opacity">
+                        {String.fromCharCode(65 + index)}
+                      </div>
+                    </Label>
+                  </div>
+                )
+              })}
+            </div>
+
+            {showExplanation && currentQuiz?.description && (
+              <div className="my-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl animate-slideIn">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm">💡</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-800 mb-2">Explanation</h4>
+                    <p className="text-blue-700 leading-relaxed">{currentQuiz?.description}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="flex gap-4 justify-between w-full sm:justify-between pt-6 border-t border-slate-200">
+              <Button
+                className="flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                disabled={quizIndex === 0}
+                onClick={() => quizChangeHandler("prev")}
+              >
+                <ArrowLeft className="w-4 h-4" /> Previous
+              </Button>
+              <Button
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                onClick={() => quizChangeHandler("next")}
+                disabled={!savedAnswer} // <-- block Next if unanswered
+              >
+                {quizIndex >= lastQuizIndex ? "Finish Quiz" : "Next Question"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default QuizModal;
+export default QuizModal

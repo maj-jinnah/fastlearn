@@ -105,27 +105,27 @@ export function SiteFooter({ className }) {
                             <div className="flex items-center space-x-3">
                                 <Mail className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                                 <a
-                                    href="mailto:hello@fastlearnacademy.com"
+                                    href="mailto:maj.jinnah1999@gmail.com"
                                     className="text-gray-600 hover:text-emerald-600 transition-colors duration-200 text-sm"
                                 >
-                                    hello@fastlearnacademy.com
+                                    maj.jinnah1999@gmail.com
                                 </a>
                             </div>
                             <div className="flex items-center space-x-3">
                                 <Phone className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                                 <a
-                                    href="tel:+1-555-123-4567"
+                                    href="tel:+880 1553 412880"
                                     className="text-gray-600 hover:text-emerald-600 transition-colors duration-200 text-sm"
                                 >
-                                    +1 (555) 123-4567
+                                    +880 1553 412880
                                 </a>
                             </div>
                             <div className="flex items-start space-x-3">
                                 <MapPin className="h-4 w-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">
-                                    123 Learning Street
+                                    Thana para, Khoksa
                                     <br />
-                                    Education City, EC 12345
+                                    Kushtia, Bangladesh
                                 </span>
                             </div>
                         </div>
@@ -176,7 +176,7 @@ export function SiteFooter({ className }) {
                 <div className="mt-12 pt-8 border-t border-gray-200">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <div className="text-sm text-gray-600">
-                            © 2024 Fast Learn Academy. All rights reserved.
+                            © 2025 Fast Learn Academy. All rights reserved.
                         </div>
                         <div className="flex space-x-6 text-sm">
                             {[

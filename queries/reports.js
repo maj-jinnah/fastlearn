@@ -73,3 +73,27 @@ export async function createWatchReport({ userId, courseId, moduleId, lessonId }
         throw new Error(error)
     }
 }
+
+export async function createAssessmentReport({ userId, courseId, assessmentId }) {
+    try {
+        let report = await Report.findOne({ student: userId, course: courseId });
+
+        if (!report) {
+            // Create new report if none exists
+            report = await Report.create({
+                student: userId,
+                course: courseId,
+                quizAssessment: assessmentId
+            });
+        } else {
+            // Update existing report with new assessmentId
+            report.quizAssessment = assessmentId;
+            await report.save(); // Added missing await
+        }
+
+        return report; // Return the created/updated report
+    } catch (error) {
+        console.error('Error creating assessment report:', error);
+        throw error; // Throw original error
+    }
+}

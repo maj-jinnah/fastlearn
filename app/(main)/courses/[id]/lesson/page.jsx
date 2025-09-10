@@ -19,9 +19,6 @@ const Course = async ({ params, searchParams }) => {
     const lessonToPlay = name ? await getLessonBySlug(name) : defaultLesson;
     const defaultModule = module ?? allModules[0].slug;
 
-    
-
-
     return (
         <div>
             <div className="flex flex-col max-w-4xl mx-auto pb-20">
