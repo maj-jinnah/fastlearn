@@ -74,7 +74,7 @@ const LessonVideoPlayer = ({ courseId, lesson, module }) => {
     }
 
     function handleOnEnded() {
-        console.log("handleOnEnded");
+        // console.log("handleOnEnded");
         setEnded(true);
     }
 

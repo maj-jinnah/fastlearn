@@ -138,7 +138,7 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
 
     const onSubmit = async (values) => {
 
-        console.log("form values --- ", values);
+        // console.log("form values --- ", values);
 
         try {
             const correctness = [

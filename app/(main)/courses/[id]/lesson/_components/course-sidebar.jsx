@@ -5,6 +5,7 @@ import { Watch } from "@/model/watch-model";
 import { getCourseDetailsByIdForWatch } from "@/queries/courses";
 import { getQuizSetById } from "@/queries/quizzes";
 import { getAReport } from "@/queries/reports";
+import { getTestimonialsForUser } from "@/queries/testimonials";
 import DownloadCertificate from "./download-certificate";
 import GiveReview from "./give-review";
 import Quiz from "./quiz";
@@ -50,6 +51,12 @@ export const CourseSidebar = async ({ courseId }) => {
 
     const allQuizzes = await getQuizSetById(quizSet);
 
+    const testimonial = await getTestimonialsForUser({
+        courseId: courseId,
+        user: loggedInUser._id,
+    });
+    // console.log('testimonial', testimonial)
+
     // console.log("isQuizComplete", isQuizComplete);
     // console.log("quizSet", quizSet);
     // console.log("report", report);
@@ -83,7 +90,7 @@ export const CourseSidebar = async ({ courseId }) => {
                         courseId={courseId}
                         progress={progress}
                     />
-                    <GiveReview courseId={courseId} />
+                    <GiveReview courseId={courseId} testimonial={testimonial} />
                 </div>
             </div>
         </>

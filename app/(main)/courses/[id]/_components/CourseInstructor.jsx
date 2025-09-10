@@ -7,8 +7,6 @@ const CourseInstructor = async ({ instructor }) => {
     const { courses, enrollments, totalReviews, averageRating } =
         await getCourseDetailsByInstructor(instructor?._id);
 
-        // console.log()
-
     return (
         <>
             <div className="bg-gray-50 rounded-md p-8 w-full">
