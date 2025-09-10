@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
 import { addQuizToQuizSet, updateQuiz } from "@/app/actions/quiz";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,8 +13,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const formSchema = z.object({
     title: z
@@ -28,12 +28,12 @@ const formSchema = z.object({
         .min(1, {
             message: "Title is required",
         }),
-    description: z
+    explanations: z
         .string({
-            required_error: "Description is required",
+            required_error: "Explanation is required",
         })
         .min(1, {
-            message: "Description is required",
+            message: "Explanation is required",
         }),
     optionA: z.object({
         label: z
@@ -81,7 +81,7 @@ const mapInitialData = (data) => {
     if (!data) {
         return {
             title: "",
-            description: "",
+            explanations: "",
             optionA: { label: "", isTrue: false },
             optionB: { label: "", isTrue: false },
             optionC: { label: "", isTrue: false },
@@ -100,7 +100,7 @@ const mapInitialData = (data) => {
 
     return {
         title: data.title || "",
-        description: data.description || "",
+        explanations: data.explanations || "",
         ...optionsObj,
     };
 };
@@ -118,11 +118,10 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
     const isEditing = !!initialData?._id;
     const shouldShowActions = isEditing || isDirty;
 
-
     function resetForm() {
         form.reset({
             title: "",
-            description: "",
+            explanations: "",
             optionA: { label: "", isTrue: false },
             optionB: { label: "", isTrue: false },
             optionC: { label: "", isTrue: false },
@@ -137,8 +136,7 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
     }, [initialData, form]);
 
     const onSubmit = async (values) => {
-
-        // console.log("form values --- ", values);
+        console.log("form values --- ", values);
 
         try {
             const correctness = [
@@ -149,15 +147,13 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
             ];
             const correctMarked = correctness.filter((val) => val === true);
 
-            if (correctMarked.length < 1) {
-                return toast.error(
-                    "Please mark at least one option as correct"
-                );
+            if (correctMarked.length !== 1) {
+                return toast.error("Please mark one option as correct");
             }
 
             if (initialData?._id) {
                 // 📝 Edit existing quiz
-                  const response = await updateQuiz(initialData?._id, values);
+                const response = await updateQuiz(initialData?._id, values);
                 toast.success("Quiz updated successfully");
                 resetForm();
             } else {
@@ -209,17 +205,17 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
                                 </FormItem>
                             )}
                         />
-                        {/* quiz description */}
+                        {/* quiz explanations */}
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="explanations"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Quiz Description</FormLabel>
+                                    <FormLabel>Quiz explanation</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             disabled={isSubmitting}
-                                            placeholder="Enter quiz description"
+                                            placeholder="Enter quiz explanation"
                                             {...field}
                                         />
                                     </FormControl>
@@ -402,10 +398,7 @@ export const AddQuizForm = ({ quizSetId, initialData, setEditQuiz }) => {
 
                         {shouldShowActions && (
                             <div className="flex items-center justify-end gap-x-2">
-                                <Button
-                                    type="button"
-                                    onClick={onClose}
-                                >
+                                <Button type="button" onClick={onClose}>
                                     {isEditing ? "Cancel Edit" : "Clear Form"}
                                 </Button>
                                 <Button disabled={isSubmitting} type="submit">

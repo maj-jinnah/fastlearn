@@ -27,7 +27,7 @@ export async function addQuizToQuizSet(quizSetId, quizData) {
     try {
         const transformQuizData = {
             title: quizData.title,
-            description: quizData.description,
+            explanations: quizData.explanations,
             slug: getSlug(quizData.title),
             options: ["A", "B", "C", "D"].map((letter) => ({
                 text: quizData[`option${letter}`].label,
@@ -191,7 +191,7 @@ export async function updateQuiz(quizId, data) {
 
         const transformQuizData = {
             title: data.title,
-            description: data.description,
+            explanations: data.explanations,
             slug: getSlug(data.title),
             options: ["A", "B", "C", "D"].map((letter) => ({
                 text: data[`option${letter}`].label,

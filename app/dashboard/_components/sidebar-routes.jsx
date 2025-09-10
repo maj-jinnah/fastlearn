@@ -24,11 +24,6 @@ const routes = [
     href: "/dashboard/courses/add",
   },
   {
-    icon: Radio,
-    label: "Lives",
-    href: "/dashboard/lives",
-  },
-  {
     icon: BookA,
     label: "Quizzes",
     href: "/dashboard/quiz-sets",
