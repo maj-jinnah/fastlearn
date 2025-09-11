@@ -12,16 +12,22 @@ import Image from "next/image";
 import Link from "next/link";
 
 const CourseCard = async ({ course }) => {
-
     const session = await auth();
     const loggedInUser = await getUserByEmail(session?.user?.email);
+
     const isEnrolled = await hasEnrollForCourse(
         loggedInUser?._id.toString(),
         course?._id
     );
 
-    const totalChapter =  course?.modules.filter(m => m.active).length;
+    const totalChapter = course?.modules.filter((m) => m.active).length;
     const progress = await getProgress(course?._id);
+
+    const amIInstructor = course?.instructor?.email === loggedInUser?.email;
+
+    // console.log("amIInstructor", amIInstructor);
+    // console.log('logged in User----', loggedInUser);
+    // console.log('course----', course);
 
     return (
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
@@ -61,23 +67,25 @@ const CourseCard = async ({ course }) => {
                     </div>
                 </div>
             </Link>
-            <div className="flex items-center justify-between mt-4">
-                {!isEnrolled && (
-                    <p className="text-md md:text-sm font-medium text-slate-700">
-                        {formatPrice(course?.price)}
-                    </p>
-                )}
 
-                {isEnrolled ? (
-                    <Link
-                        href={`/courses/${course._id.toString()}/lesson`}
-                        className={cn(
-                            buttonVariants({
-                                size: "sm",
-                            })
-                        )}
-                    >
-                        {/* <Button
+            {!amIInstructor && (
+                <div className="flex items-center justify-between mt-4">
+                    {!isEnrolled && (
+                        <p className="text-md md:text-sm font-medium text-slate-700">
+                            {formatPrice(course?.price)}
+                        </p>
+                    )}
+
+                    {isEnrolled ? (
+                        <Link
+                            href={`/courses/${course._id.toString()}/lesson`}
+                            className={cn(
+                                buttonVariants({
+                                    size: "sm",
+                                })
+                            )}
+                        >
+                            {/* <Button
                             type="submit"
                             variant="ghost"
                             className="text-xs text-sky-700 h-7 gap-1"
@@ -85,20 +93,21 @@ const CourseCard = async ({ course }) => {
                             Access Course
                             <ArrowRight className="w-3" />
                         </Button> */}
-                        Access Course
-                        <ArrowRight className="w-3" />
-                    </Link>
-                ) : (
-                    <EnrollCourse
-                        courseId={course._id.toString()}
-                        courseTitle={course.title}
-                        coursePrice={course.price}
-                        description={course.description}
-                        asLink={true}
-                        session={session}
-                    />
-                )}
-            </div>
+                            Access Course
+                            <ArrowRight className="w-3" />
+                        </Link>
+                    ) : (
+                        <EnrollCourse
+                            courseId={course._id.toString()}
+                            courseTitle={course.title}
+                            coursePrice={course.price}
+                            description={course.description}
+                            asLink={true}
+                            session={session}
+                        />
+                    )}
+                </div>
+            )}
         </div>
     );
 };

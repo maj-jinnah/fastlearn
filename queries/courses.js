@@ -5,6 +5,7 @@ import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { Testimonial } from "@/model/testimonial-model";
 import { User } from "@/model/user-model";
+import { dbConnection } from "@/service/dbConnection";
 import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
 
@@ -179,4 +180,46 @@ export function courseLessons(courseId) {
             },
         })
         .lean();
+}
+
+
+export async function getCourseListBySearchParams({ categories = [], sort = null }) {
+    await dbConnection();
+
+    const query = { active: true };
+
+    // Step 1: Match categories by slug
+    if (categories.length > 0) {
+        const categoryDocs = await Category.find({
+            slug: { $in: categories },
+        }).select("_id");
+
+        const categoryIds = categoryDocs.map((cat) => cat._id);
+
+        if (categoryIds.length > 0) {
+            query.category = { $in: categoryIds };
+        }
+    }
+
+    // Step 2: Sorting
+    let sortOption = {};
+    switch (sort) {
+        case "price-asc":
+            sortOption.price = 1;
+            break;
+        case "price-desc":
+            sortOption.price = -1;
+            break;
+        default:
+            sortOption.createdOn = -1; // fallback: newest first
+    }
+
+    // Step 3: Fetch courses
+    const courses = await Course.find(query)
+        .populate("category", "title slug") // only fetch category title + slug
+        .populate("instructor", "name email") // only fetch needed fields
+        .sort(sortOption)
+        .lean();
+
+    return toPlainObject(courses);
 }

@@ -1,7 +1,5 @@
 import { cn } from "@/lib/utils";
 import {
-    Award,
-    BookOpen,
     Facebook,
     Instagram,
     Linkedin,
@@ -9,39 +7,24 @@ import {
     MapPin,
     Phone,
     Twitter,
-    Users,
 } from "lucide-react";
+import { Logo } from "./logo";
 
 export function SiteFooter({ className }) {
     return (
         <footer
-            className={
-                cn(className) + "bg-gray-50 border-t border-gray-200"
-            }
+            className={cn(className) + "bg-gray-50 border-t border-gray-200 mt-10"}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* About Section */}
                     <div className="space-y-4">
-                        <div className="flex items-center space-x-2">
-                            <BookOpen className="h-8 w-8 text-emerald-600" />
-                            <h3 className="text-xl font-bold text-gray-900">
-                                Fast Learn Academy
-                            </h3>
-                        </div>
+                        <Logo />
                         <p className="text-gray-600 text-sm leading-relaxed">
                             Empowering learners worldwide with cutting-edge
                             courses and expert instruction. Transform your
                             career with our comprehensive learning platform.
                         </p>
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Users className="h-4 w-4 text-emerald-600" />
-                            <span>50,000+ Active Students</span>
-                        </div>
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Award className="h-4 w-4 text-emerald-600" />
-                            <span>500+ Expert Instructors</span>
-                        </div>
                     </div>
 
                     {/* Quick Links */}
@@ -51,12 +34,10 @@ export function SiteFooter({ className }) {
                         </h4>
                         <ul className="space-y-2">
                             {[
-                                "Web Development",
-                                "Data Science",
-                                "Digital Marketing",
-                                "UI/UX Design",
-                                "Mobile Development",
-                                "Cloud Computing",
+                                "Design",
+                                "Development",
+                                "IT & Software",
+                                "Business",
                             ].map((course) => (
                                 <li key={course}>
                                     <a
@@ -176,7 +157,7 @@ export function SiteFooter({ className }) {
                 <div className="mt-12 pt-8 border-t border-gray-200">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <div className="text-sm text-gray-600">
-                            © 2025 Fast Learn Academy. All rights reserved.
+                            © 2025 FastLearn Academy. All rights reserved.
                         </div>
                         <div className="flex space-x-6 text-sm">
                             {[

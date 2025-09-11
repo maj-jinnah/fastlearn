@@ -13,6 +13,11 @@ const HomePage = async () => {
   const courses = await getCourseList();
   const categories = await getCategories();
 
+  // const latestCourses = courses
+  // .sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
+  // .slice(0, 4);
+  const latestCourses = courses.slice(-4).reverse();
+
   return (
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32 grainy">
@@ -105,7 +110,7 @@ const HomePage = async () => {
           </Link>
         </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
-          {courses.map((course) => {
+          {latestCourses.map((course) => {
             return (
               <CourseCard key={course?._id} course={course} />
             );

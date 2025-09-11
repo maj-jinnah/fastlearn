@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { updateCourse } from "@/app/actions/course";
 import { Button } from "@/components/ui/button";
 import {
     Command,
@@ -29,7 +30,6 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { updateCourse } from "@/app/actions/course";
 
 const formSchema = z.object({
     value: z.string().min(1),
@@ -60,12 +60,12 @@ export const CategoryForm = ({ initialData, courseId, options }) => {
                 (opt) => opt.value === values.value
             );
             // console.log(selectedCategory?.id)
-            await updateCourse(courseId, { "category": selectedCategory?.id });
+            await updateCourse(courseId, { category: selectedCategory?.id });
             toast.success("Course updated");
             toggleEdit();
             router.refresh();
         } catch (error) {
-          console.log('error', error)
+            console.log("error", error);
             toast.error("Something went wrong");
         }
     };

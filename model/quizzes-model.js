@@ -12,6 +12,7 @@ const quizzesSchema = new Schema({
         type: String,
     },
     slug: {
+        required: true,
         type: String,
     },
     options: {

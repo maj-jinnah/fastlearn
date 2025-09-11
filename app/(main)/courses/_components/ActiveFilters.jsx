@@ -5,9 +5,9 @@ import { X } from "lucide-react";
 import { useState } from "react";
 
 const ActiveFilters = () => {
+    
     const [filter, setFilter] = useState({
-        categories: ["development"],
-        price: ["free"],
+        categories: [],
         sort: "",
     });
 
@@ -49,7 +49,7 @@ const ActiveFilters = () => {
                     </Button>
                 ))}
             {/* active prices */}
-            {filter.price.length > 0 &&
+            {/* {filter.price.length > 0 &&
                 filter.price.map((price) => (
                     <Button
                         key={price}
@@ -62,7 +62,7 @@ const ActiveFilters = () => {
                         {price}
                         <X className="w-3" />
                     </Button>
-                ))}
+                ))} */}
         </div>
     );
 };

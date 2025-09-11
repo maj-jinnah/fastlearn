@@ -6,7 +6,6 @@ import { hasEnrollForCourse } from "@/queries/enrollments";
 import { getUserByEmail } from "@/queries/user";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 const CourseDetailsIntro = async ({ course }) => {
     const { title, thumbnail, subtitle } = course;
@@ -22,6 +21,9 @@ const CourseDetailsIntro = async ({ course }) => {
         loggedInUser?._id.toString(),
         course._id.toString()
     );
+
+    const amIInstructor = course?.instructor?.email === loggedInUser?.email;
+    // console.log("single course page --- amIInstructor", amIInstructor);
 
     return (
         <div className="overflow-x-hidden  grainy">
@@ -39,41 +41,43 @@ const CourseDetailsIntro = async ({ course }) => {
                                 </span>
                             </p>
 
-                            <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                                {isEnrolled ? (
+                            {!amIInstructor && (
+                                <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
+                                    {isEnrolled ? (
+                                        <Link
+                                            href={`/courses/${course._id.toString()}/lesson`}
+                                            className={cn(
+                                                buttonVariants({
+                                                    size: "lg",
+                                                })
+                                            )}
+                                        >
+                                            Access Course
+                                        </Link>
+                                    ) : (
+                                        <EnrollCourse
+                                            courseId={course._id.toString()}
+                                            courseTitle={course.title}
+                                            coursePrice={course.price}
+                                            description={course.description}
+                                            asLink={false}
+                                            session={session}
+                                        />
+                                    )}
+
                                     <Link
-                                        href={`/courses/${course._id.toString()}/lesson`}
+                                        href=""
                                         className={cn(
                                             buttonVariants({
+                                                variant: "outline",
                                                 size: "lg",
                                             })
                                         )}
                                     >
-                                        Access Course
+                                        See Intro
                                     </Link>
-                                ) : (
-                                    <EnrollCourse
-                                        courseId={course._id.toString()}
-                                        courseTitle={course.title}
-                                        coursePrice={course.price}
-                                        description={course.description}
-                                        asLink={false}
-                                        session={session}
-                                    />
-                                )}
-
-                                <Link
-                                    href=""
-                                    className={cn(
-                                        buttonVariants({
-                                            variant: "outline",
-                                            size: "lg",
-                                        })
-                                    )}
-                                >
-                                    See Intro
-                                </Link>
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
