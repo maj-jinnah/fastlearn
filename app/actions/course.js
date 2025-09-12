@@ -47,7 +47,7 @@ export async function changeCoursePublishState(courseId) {
             if(foundCourse?.modules?.length < 1){
                 throw new Error("Please add at least one module");
             }
-            await validateCourseModules(foundCourse.modules)
+            await validateCourseModules(foundCourse?.modules)
         }
 
         const updatedCourse = await Course.findByIdAndUpdate(
@@ -153,7 +153,7 @@ async function validateCourseModules(moduleIds) {
   const hasActiveModule = modules.some((m) => m.active);
 
   if (!hasActiveModule) {
-    throw new Error("To publish or unpublish, you must have at least one active module");
+    throw new Error("To publish or unpublish, you must have at least one published module");
   }
 
   return true;

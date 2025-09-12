@@ -56,6 +56,14 @@ export async function changeModulePublishState(moduleId) {
         const foundModule = await Module.findById(moduleId);
         if (!foundModule) throw new Error("Module not found");
 
+        if(foundModule?.lessonIds){
+            if(foundModule?.lessonIds?.length < 1){
+                throw new Error("Please add at least one lesson");
+            }
+
+            await validateModuleLessons(foundModule?.lessonIds)
+        }
+
         const updatedModule = await Module.findByIdAndUpdate(
             moduleId,
             { active: !foundModule?.active },
@@ -91,4 +99,18 @@ export async function deleteModule(moduleId, courseId) {
     } catch (error) {
         throw new Error(error.message || "Failed to delete module");
     }
+}
+
+async function validateModuleLessons(lessonIds) {
+  // Fetch lessons by IDs
+  const lessons = await Lesson.find({ _id: { $in: lessonIds } });
+
+  // Check if any lesson is active
+  const hasActiveLesson = lessons.some((l) => l.active);
+
+  if (!hasActiveLesson) {
+    throw new Error("To publish or unpublish, you must have at least one published lesson");
+  }
+
+  return true;
 }
