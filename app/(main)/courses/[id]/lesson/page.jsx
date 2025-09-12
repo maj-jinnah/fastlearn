@@ -17,7 +17,10 @@ const Course = async ({ params, searchParams }) => {
     )[0];
 
     const lessonToPlay = name ? await getLessonBySlug(name) : defaultLesson;
-    const defaultModule = module ?? allModules[0].slug;
+
+    
+    // todo : add default module
+    const defaultModule = module ?? allModules[0].slug ;
 
     return (
         <div>

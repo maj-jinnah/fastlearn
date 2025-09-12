@@ -35,7 +35,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { UploadDropzone } from "@/components/file-upload";
-import { Combobox } from "@/components/ui/combobox";
+// import { Combobox } from "@/components/ui/combobox";
 const formSchema = z.object({
   title: z.string().min(1, {
     message: "Title is required!",
@@ -213,7 +213,7 @@ const AddLive = () => {
                   <FormItem>
                     <FormLabel>Quiz Set</FormLabel>
                     <FormControl>
-                      <Combobox
+                      {/* <Combobox
                         options={[
                           {
                             label: "Reactive Accelerator Quizes",
@@ -225,7 +225,7 @@ const AddLive = () => {
                           },
                         ]}
                         {...field}
-                      />
+                      /> */}
                     </FormControl>
                     <FormMessage />
                   </FormItem>

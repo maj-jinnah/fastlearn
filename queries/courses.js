@@ -217,7 +217,8 @@ export async function getCourseListBySearchParams({ categories = [], sort = null
     // Step 3: Fetch courses
     const courses = await Course.find(query)
         .populate("category", "title slug") // only fetch category title + slug
-        .populate("instructor", "name email") // only fetch needed fields
+        .populate("instructor", "name email")
+        .populate("modules", "active") // only fetch needed fields
         .sort(sortOption)
         .lean();
 

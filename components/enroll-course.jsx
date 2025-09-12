@@ -14,21 +14,25 @@ export const EnrollCourse = ({
     description,
     session,
 }) => {
-    if (!session) {
-        return (
-            <Link
-                href="/login"
-                className={cn(
-                    buttonVariants({
-                        size: "lg",
-                    })
-                )}
-            >
-                Enroll
-                <ArrowRight className="w-3" />
-            </Link>
-        );
-    }
+
+    // console.log('session--', session)
+    // console.log('session email ---', session?.user?.email)
+
+    // if (!session) {
+    //     return (
+    //         <Link
+    //             href="/login"
+    //             className={cn(
+    //                 buttonVariants({
+    //                     size: "lg",
+    //                 })
+    //             )}
+    //         >
+    //             Enroll
+    //             <ArrowRight className="w-3" />
+    //         </Link>
+    //     );
+    // }
 
     const formAction = async (data) => {
         const { url } = await createCheckoutSession(data);

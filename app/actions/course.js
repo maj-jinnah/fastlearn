@@ -32,6 +32,23 @@ export async function changeCoursePublishState(courseId) {
     try {
         const foundCourse = await Course.findById(courseId);
         if (!foundCourse) throw new Error("Course not found");
+        // console.log("foundCourse", foundCourse)
+
+        if(!foundCourse?.thumbnail){
+            throw new Error("Please upload a thumbnail");
+        }
+        if(foundCourse?.price < 498){
+            throw new Error("Price must be at least 499 or higher");
+        }
+        if(!foundCourse?.category){
+                throw new Error("You need to select a category for your course");
+        }
+        if(foundCourse?.modules){
+            if(foundCourse?.modules?.length < 1){
+                throw new Error("Please add at least one module");
+            }
+            await validateCourseModules(foundCourse.modules)
+        }
 
         const updatedCourse = await Course.findByIdAndUpdate(
             courseId,
@@ -126,4 +143,18 @@ export async function quizSetForCourse(courseId, quizSetId) {
     } catch (error) {
         throw new Error(`Failed to update quizSet for course: ${error.message}`);
     }
+}
+
+async function validateCourseModules(moduleIds) {
+  // Get all modules by IDs
+  const modules = await Module.find({ _id: { $in: moduleIds } });
+
+  // Check if any module is active
+  const hasActiveModule = modules.some((m) => m.active);
+
+  if (!hasActiveModule) {
+    throw new Error("To publish or unpublish, you must have at least one active module");
+  }
+
+  return true;
 }

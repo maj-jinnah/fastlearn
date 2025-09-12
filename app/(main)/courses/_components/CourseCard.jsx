@@ -21,6 +21,8 @@ const CourseCard = async ({ course }) => {
     );
 
     const totalChapter = course?.modules.filter((m) => m.active).length;
+    // console.log('totalChapter', totalChapter);
+
     const progress = await getProgress(course?._id);
 
     const amIInstructor = course?.instructor?.email === loggedInUser?.email;
@@ -59,11 +61,11 @@ const CourseCard = async ({ course }) => {
                             </div>
                         </div>
 
-                        <CourseProgress
+                        { isEnrolled && <CourseProgress
                             size="sm"
                             value={progress}
                             variant={110 === 100 ? "success" : ""}
-                        />
+                        />}
                     </div>
                 </div>
             </Link>
@@ -96,7 +98,7 @@ const CourseCard = async ({ course }) => {
                             Access Course
                             <ArrowRight className="w-3" />
                         </Link>
-                    ) : (
+                    ) : session?.user?.email ? (
                         <EnrollCourse
                             courseId={course._id.toString()}
                             courseTitle={course.title}
@@ -105,6 +107,20 @@ const CourseCard = async ({ course }) => {
                             asLink={true}
                             session={session}
                         />
+                    ) : (
+                        <Link
+                            href="/login"
+                            className={cn(
+                                buttonVariants({
+                                    size: "lg",
+                                    variant: "ghost",
+                                })+'text-xs text-sky-700 h-7 gap-1'
+
+                            )}
+                        >
+                            Enroll
+                            <ArrowRight className="w-3" />
+                        </Link>
                     )}
                 </div>
             )}
