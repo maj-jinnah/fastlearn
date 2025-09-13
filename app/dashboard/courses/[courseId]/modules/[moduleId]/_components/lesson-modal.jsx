@@ -1,17 +1,23 @@
 import { IconBadge } from "@/components/icon-badge";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
-import Link from "next/link";
-import { LessonAccessForm } from "./lesson-access-form";
+import { LayoutDashboard, Video } from "lucide-react";
 import { LessonActions } from "./lesson-action";
 import { LessonDescriptionForm } from "./lesson-description-form";
 import { LessonTitleForm } from "./lesson-title-form";
 import { VideoUrlForm } from "./video-url-form";
+import AlertBanner from "@/components/alert-banner";
 
-export const LessonModal = ({ open, setOpen, courseId, lesson, moduleId,onClose }) => {
+export const LessonModal = ({
+    open,
+    setOpen,
+    courseId,
+    lesson,
+    moduleId,
+    onClose,
+}) => {
     const postDelete = () => {
         setOpen(false);
-        onClose()
+        onClose();
     };
 
     return (
@@ -26,14 +32,21 @@ export const LessonModal = ({ open, setOpen, courseId, lesson, moduleId,onClose 
                 <div>
                     <div className="flex items-center justify-between">
                         <div className="w-full">
-                            <Link
+                            {/* <Link
                                 href={`/dashboard/courses/${courseId}`}
                                 className="flex items-center text-sm hover:opacity-75 transition mb-6"
                             >
                                 <ArrowLeft className="h-4 w-4 mr-2" />
                                 Back to course setup
-                            </Link>
-                            <div className="flex items-center justify-end">
+                            </Link> */}
+                            {lesson?.active === false && (
+                                <AlertBanner
+                                    label="This lesson is unpublished. It will not be visible in the course."
+                                    variant="warning"
+                                    className={"mt-5"}
+                                />
+                            )}
+                            <div className="flex items-center justify-end mt-6">
                                 <LessonActions
                                     lesson={lesson}
                                     moduleId={moduleId}
@@ -46,7 +59,7 @@ export const LessonModal = ({ open, setOpen, courseId, lesson, moduleId,onClose 
                         <div className="space-y-4">
                             <div>
                                 <div className="flex items-center gap-x-2">
-                                    <IconBadge icon={LayoutDashboard} />
+                                    <IconBadge icon={LayoutDashboard} className="mb-5" />
                                     {/* <h2 className="text-xl">Customize Your chapter</h2> */}
                                     <DialogTitle className="text-xl">
                                         Customize Your chapter
@@ -65,7 +78,7 @@ export const LessonModal = ({ open, setOpen, courseId, lesson, moduleId,onClose 
                                     lessonId={lesson?._id}
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <div className="flex items-center gap-x-2">
                                     <IconBadge icon={Eye} />
                                     <DialogTitle className="text-xl">
@@ -79,7 +92,7 @@ export const LessonModal = ({ open, setOpen, courseId, lesson, moduleId,onClose 
                                     courseId={courseId}
                                     lessonId={lesson?._id}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                         <div>
                             <div className="flex items-center gap-x-2">

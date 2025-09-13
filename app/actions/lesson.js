@@ -52,6 +52,10 @@ export async function changeLessonPublishState(LessonId) {
     const lesson = await Lesson.findById(LessonId);
     if (!lesson) throw new Error("Lesson not found");
 
+    if(!lesson?.description) throw new Error("Description is required");
+    if(!lesson?.video_url) throw new Error("Video URL is required");
+    if(!lesson?.duration) throw new Error("Video duration is required");
+
     const updatedLesson = await Lesson.findByIdAndUpdate(
       LessonId,
       { active: !lesson?.active },
