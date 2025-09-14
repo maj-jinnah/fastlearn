@@ -64,7 +64,7 @@ export const VideoUrlForm = ({ initialData, courseId, lessonId }) => {
             if(!payload?.video_url || payload?.duration === 0) throw Error('Video URL and Duration is Required');
             await updateLesson(lessonId, payload);
 
-            toast.success("Add video updated");
+            toast.success("Video URL is added.");
             toggleEdit();
             router.refresh();
         } catch (error) {

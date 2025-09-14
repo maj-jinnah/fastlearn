@@ -68,6 +68,7 @@ export const LessonForm = ({ initialData, moduleId, courseId }) => {
                 },
             ]);
             toast.success("Lesson created");
+            form.reset();
             toggleCreating();
             router.refresh();
         } catch (error) {
@@ -88,12 +89,19 @@ export const LessonForm = ({ initialData, moduleId, courseId }) => {
         }
     };
 
-    const onEdit = async (id) => {
-        const foundedLesson = lessons.find((lesson) => lesson._id === id);
-        setLessonToEdit(foundedLesson);
-        setId(id);
-        setIsEditing(true);
+    //this one is used for interceptor route and the bottom one is use for modal
+    const onEdit = (id) => {
+        router.push(
+            `/dashboard/courses/${courseId}/modules/${moduleId}/lessons/${id}`
+        );
     };
+    // const onEdit = async (id) => {
+    //     const foundedLesson = lessons.find((lesson) => lesson._id === id);
+    //     setLessonToEdit(foundedLesson);
+    //     setId(id);
+    //     setIsEditing(true);
+    // };
+    
 
     // useEffect(() => {
     //     const getData = async () => {
@@ -178,7 +186,7 @@ export const LessonForm = ({ initialData, moduleId, courseId }) => {
                     Drag & Drop to reorder the lessons
                 </p>
             )}
-            <LessonModal
+            {/* <LessonModal
                 open={isEditing}
                 setOpen={setIsEditing}
                 courseId={courseId}
@@ -189,7 +197,7 @@ export const LessonForm = ({ initialData, moduleId, courseId }) => {
                         window.location.reload();
                     }, 2500);
                 }}
-            />
+            /> */}
         </div>
     );
 };

@@ -6,7 +6,7 @@ const LessonPage = async ({params}) => {
     console.log('params id get', courseId, moduleId, lessonId)
     return (
         <div>
-            <h1>Hi, guys</h1>
+            <h1>Interceptor lesson router --- Hi, guys</h1>
         </div>
     );
 };

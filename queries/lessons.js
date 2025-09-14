@@ -2,9 +2,13 @@ import { toPlainObject } from "@/lib/convert-data";
 import { Lesson } from "@/model/lesson.model";
 
 export async function getLesson(lessonId) {
-    const lesson = await Lesson.findById(lessonId).lean();
+    try {
+        const lesson = await Lesson.findById(lessonId).lean();
+        return toPlainObject(lesson);
 
-    return lesson;
+    } catch (error) {
+        throw Error(error)
+    }
 }
 
 export async function create(lessonData) {

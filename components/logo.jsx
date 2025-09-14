@@ -6,7 +6,7 @@ import logo from "../public/assets/brain-generator-idea.svg";
 export const Logo = ({ hidden }) => {
     return (
         <Link href="/" className="flex justify-center items-center gap-3">
-            <Image className={cn( hidden ? "max-w-[80px]" : "max-w-[75px]")} src={logo} alt="logo" />
+            <Image className={cn( "max-w-[75px]")} src={logo} alt="logo" />
             <div className={hidden ? "hidden" : "flex flex-col"}>
                 <div className="text-center">
                     <div className="flex items-center justify-center space-x-1">

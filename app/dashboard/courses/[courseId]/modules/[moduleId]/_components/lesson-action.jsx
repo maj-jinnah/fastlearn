@@ -6,10 +6,12 @@ import { changeLessonPublishState, deleteLesson } from "@/app/actions/lesson";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export const LessonActions = ({ lesson, moduleId, onDelete }) => {
+export const LessonActions = ({ lesson, moduleId, courseId }) => {
     const [published, setPublished] = useState(lesson?.active);
     const [action, setAction] = useState(null);
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,6 +23,7 @@ export const LessonActions = ({ lesson, moduleId, onDelete }) => {
                     const res = await changeLessonPublishState(lesson?._id);
                     setPublished(!published);
                     toast.success("Lesson has been updated");
+                    router.refresh();
                     break;
                 case "delete":
                     if (published) {
@@ -28,7 +31,7 @@ export const LessonActions = ({ lesson, moduleId, onDelete }) => {
                     } else {
                         await deleteLesson(lesson?._id, moduleId);
                         toast.success("Lesson successfully deleted");
-                        onDelete();
+                        router.push(`/dashboard/courses/${courseId}/modules/${moduleId}`);
                     }
                     break;
                 default:
