@@ -20,7 +20,7 @@ const SingleCoursePage = async ({ params }) => {
 
             <CourseDetails course={course} />
 
-            {course?.testimonials && <Testimonials testimonials={course?.testimonials} />}
+            {course?.testimonials.length > 0 && <Testimonials testimonials={course?.testimonials} />}
 
             {/* <RelatedCourses /> */}
         </>

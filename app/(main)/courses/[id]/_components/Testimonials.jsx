@@ -11,6 +11,8 @@ import Image from "next/image";
 
 
 const Testimonials = ({testimonials}) => {
+
+    console.log('testimonials', testimonials)
     
     return (
         <section className="pb-8 md:pb-12 lg:pb-24">
@@ -37,7 +39,7 @@ const Testimonials = ({testimonials}) => {
                                                 alt=""
                                                 src={
                                                     testimonial?.user
-                                                        ?.profilePicture
+                                                        ?.profilePicture || "https://i.pravatar.cc"
                                                 }
                                                 width="56"
                                                 height="56"
@@ -47,7 +49,7 @@ const Testimonials = ({testimonials}) => {
                                                 <p className="mt-0.5 text-lg font-medium text-gray-900">
                                                     {`${testimonial?.user?.firstName} ${testimonial?.user?.lastName}`}
                                                 </p>
-                                                <div className="flex justify-center gap-0.5 text-yellow-600">
+                                                <div className="flex justify-start gap-0.5 text-yellow-600">
                                                     <StarRating
                                                         rating={
                                                             testimonial?.rating

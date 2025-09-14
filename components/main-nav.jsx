@@ -104,6 +104,11 @@ export function MainNav({ items, children }) {
                         </DropdownMenu>
                     </div>
                 )}
+                {loggedInUser && (
+                    <p className="text-xl font-medium">
+                        {loggedInUser?.firstNme} {loggedInUser?.lastName} |
+                    </p>
+                )}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <div className="cursor-pointer">

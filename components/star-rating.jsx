@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import star from '../public/assets/star.svg';
 
 const StarRating = ({rating}) => {
 
@@ -7,7 +8,7 @@ const StarRating = ({rating}) => {
     return (
         <>
          {stars.map((_, index) => (
-            <Image key={index} src={`/assets/star.svg`} alt="star" width={20} height={20} />
+            <Image key={index} src={star} alt="star" width={20} height={20} />
              
         ))}   
         </>
