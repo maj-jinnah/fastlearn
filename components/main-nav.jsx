@@ -105,7 +105,7 @@ export function MainNav({ items, children }) {
                     </div>
                 )}
                 {loggedInUser && (
-                    <p className="text-xl font-medium">
+                    <p className="text-xl font-medium hidden md:block">
                         {loggedInUser?.firstNme} {loggedInUser?.lastName} |
                     </p>
                 )}
@@ -140,9 +140,6 @@ export function MainNav({ items, children }) {
                             <Link href="/account/enrolled-courses">
                                 My Courses
                             </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer" asChild>
-                            <Link href="">Testimonials & Certificates</Link>
                         </DropdownMenuItem>
                         {loginSession && (
                             <DropdownMenuItem

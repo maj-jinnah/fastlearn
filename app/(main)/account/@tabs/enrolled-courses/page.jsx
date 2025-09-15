@@ -27,7 +27,7 @@ async function EnrolledCourses() {
                     </p>
                 </div>
             ) : (
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {courses.map((enrollment) => (
                         <Link
                             href={`/courses/${enrollment?.course?._id.toString()}/lesson`}

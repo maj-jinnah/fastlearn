@@ -10,6 +10,7 @@ import DownloadCertificate from "./download-certificate";
 import GiveReview from "./give-review";
 import Quiz from "./quiz";
 import SidebarModules from "./sidebar-modules";
+import { getFirstLesson } from "@/queries/lessons";
 
 export const CourseSidebar = async ({ courseId }) => {
     const course = await getCourseDetailsByIdForWatch(courseId);
@@ -60,7 +61,20 @@ export const CourseSidebar = async ({ courseId }) => {
     // console.log("isQuizComplete", isQuizComplete);
     // console.log("quizSet", quizSet);
     // console.log("report", report);
-    // console.log('course', course)
+
+    const courseForActive = await getFirstLesson(courseId);
+    const firstLesson = courseForActive?.modules.map((module) =>{
+        if(module?.order === 0){
+            return module?.lessonIds.map((lesson) =>{
+                if(lesson?.order === 0){
+                    return lesson
+                }
+            }).filter(Boolean)
+        }
+    }).filter(Boolean).flat()[0]
+
+    // console.log('firstLesson', courseForActive)
+    // console.log('firstLesson', firstLesson)
     // console.log("allQuizzes", allQuizzes);
 
     return (
@@ -72,7 +86,7 @@ export const CourseSidebar = async ({ courseId }) => {
                         <CourseProgress variant="success" value={progress} />
                     </div>
                 </div>
-                <SidebarModules modules={updatedModules} courseId={courseId} />
+                <SidebarModules modules={updatedModules} courseId={courseId} firstLesson={firstLesson} />
 
                 <div className="w-full px-6 border-t mt-3">
                     {quizSet && (

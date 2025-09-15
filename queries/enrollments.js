@@ -1,5 +1,7 @@
+import { toPlainObject } from "@/lib/convert-data";
 import { Course } from "@/model/course-model";
 import { Enrollment } from "@/model/enrollment-model";
+import { Module } from "@/model/module.model";
 
 export async function getEnrollmentsForCourse(courseId) {
     const enrollments = await Enrollment.find({ course: courseId })
@@ -13,10 +15,15 @@ export async function getEnrollmentsForUser(userId) {
         .populate({
             path: 'course',
             model: Course,
+            populate : {
+                path: 'modules',
+                model: Module,
+                match: { active: true }
+            },
         })
         .lean();
 
-    return enrollments;
+    return toPlainObject(enrollments);
 }
 
 export async function hasEnrollForCourse(userId, courseId) {
@@ -25,7 +32,7 @@ export async function hasEnrollForCourse(userId, courseId) {
         student: userId,
         course: courseId,
     });
-    
+
     if (!enrollment) {
         return false;
     }
@@ -43,7 +50,7 @@ export async function courseEnroll(courseId, userId, paymentMethod) {
         });
         return enrollment;
     } catch (error) {
-        console.error("Error enrolling in course:", error);
+        // console.error("Error enrolling in course:", error);
         throw new Error("Failed to enroll in course");
     }
 }

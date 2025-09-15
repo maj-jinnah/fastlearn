@@ -65,23 +65,26 @@ const EnrollCourseCard = async ({enrolledCourse, loggedInUser}) => {
                     </div>
                 </div>
                 <div className=" border-b pb-2 mb-2">
-                    <div className="flex items-center justify-between">
-                        <p className="text-md md:text-sm font-medium text-slate-700">
-                            Total Modules: {enrolledCourse?.course?.modules?.length}
-                        </p>
-                        <p className="text-md md:text-sm font-medium text-slate-700">
-                            Completed Modules{" "}
-                            <Badge variant="success">{totalCompletedModules}</Badge>
-                        </p>
+                    <div className="flex flex-col">
+                        <div className="flex justify-between items-center text-md md:text-sm font-medium text-slate-700">
+                            <span>Total Modules</span> <span>{enrolledCourse?.course?.modules?.length}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-md md:text-sm font-medium text-slate-700">
+                            <span>Completed Modules</span>
+                            {/* <Badge variant="success">{totalCompletedModules}</Badge> */}
+                            <span>{totalCompletedModules}</span>
+                        </div>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                        <p className="text-md md:text-sm font-medium text-slate-700">
-                            Total Quizzes: {quizAssessments?.length}
-                        </p>
+                    <div className="flex flex-col justify-between mt-2">
+                        <div className="flex justify-between items-center text-md md:text-sm font-medium text-slate-700">
+                            <span>Total Quizzes</span> <span>{quizAssessments?.length}</span>
+                        </div>
 
-                        <p className="text-md md:text-sm font-medium text-slate-700">
-                            Quiz taken <Badge variant="success">{quizTaken?.length}</Badge>
-                        </p>
+                        <div className="flex justify-between items-center text-md md:text-sm font-medium text-slate-700">
+                            <span>Quiz taken</span>
+                            {/* <Badge variant="success">{quizTaken?.length}</Badge> */}
+                            <span>{quizTaken?.length}</span>
+                        </div>
                     </div>
                     <div className="flex items-center justify-between mt-2">
                         <p className="text-md md:text-sm font-medium text-slate-700">

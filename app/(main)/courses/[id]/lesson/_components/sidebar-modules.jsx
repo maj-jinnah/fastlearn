@@ -8,7 +8,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import SidebarLessons from "./sidebar-lessons";
 
-const SidebarModules = ({ modules, courseId }) => {
+const SidebarModules = ({ modules, courseId, firstLesson }) => {
     const searchParams = useSearchParams();
     const allModules = modules.toSorted((a, b) => a.order - b.order);
 
@@ -21,7 +21,6 @@ const SidebarModules = ({ modules, courseId }) => {
     });
 
     const expandedModuleId = selectedModule?._id ?? allModules[0]?._id;
-    // console.log("allModules ---", allModules);
     return (
         <>
             <Accordion
@@ -41,6 +40,7 @@ const SidebarModules = ({ modules, courseId }) => {
                             courseId={courseId}
                             lessons={module?.lessonIds}
                             module={module?.slug}
+                            firstLesson={firstLesson}
                         />
                     </AccordionItem>
                 ))}

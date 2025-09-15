@@ -1,7 +1,7 @@
 import { AccordionContent } from "@/components/ui/accordion";
 import SidebarLessonItems from "./sidebar-lesson-items";
 
-const SidebarLessons = ({ lessons, module, courseId }) => {
+const SidebarLessons = ({ lessons, module, courseId, firstLesson }) => {
     const sortedLessons = lessons.toSorted((a, b) => a.order - b.order);
     return (
         <AccordionContent>
@@ -17,6 +17,7 @@ const SidebarLessons = ({ lessons, module, courseId }) => {
                         lesson={lesson}
                         module={module}
                         courseId={courseId}
+                        firstOne={firstLesson?.slug === lesson?.slug? true : false}
                     />
                 ))}
                 {/* <SidebarLessonItems /> */}
