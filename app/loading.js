@@ -334,7 +334,7 @@ export default function Loading() {
             Loading
           </h2>
           <p className="mt-2 text-slate-600 dark:text-slate-400 animate-pulse delay-500">
-            Preparing your experience...
+            please wait...
           </p>
         </div>
 
