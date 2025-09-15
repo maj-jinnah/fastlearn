@@ -17,13 +17,13 @@ const AccountSidebar = async () => {
             <div className="relative">
                 <div className="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
                     <div className="profile-pic text-center mb-5">
-                        <input
+                        {/* <input
                             id="pro-img"
                             name="profile-image"
                             type="file"
-                            className="hidden"
-                            // onchange="loadFile(event)"
-                        />
+                            // className="hidden"
+                            // onchange={loadFile(event)}
+                        /> */}
                         <div>
                             <div className="relative size-28 mx-auto">
                                 <Image
