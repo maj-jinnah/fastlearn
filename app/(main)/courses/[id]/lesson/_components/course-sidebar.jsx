@@ -56,26 +56,8 @@ export const CourseSidebar = async ({ courseId }) => {
         courseId: courseId,
         user: loggedInUser._id,
     });
-    // console.log('testimonial', testimonial)
 
-    // console.log("isQuizComplete", isQuizComplete);
-    // console.log("quizSet", quizSet);
-    // console.log("report", report);
-
-    const courseForActive = await getFirstLesson(courseId);
-    const firstLesson = courseForActive?.modules.map((module) =>{
-        if(module?.order === 0){
-            return module?.lessonIds.map((lesson) =>{
-                if(lesson?.order === 0){
-                    return lesson
-                }
-            }).filter(Boolean)
-        }
-    }).filter(Boolean).flat()[0]
-
-    // console.log('firstLesson', courseForActive)
-    // console.log('firstLesson', firstLesson)
-    // console.log("allQuizzes", allQuizzes);
+    const firstLesson = await getFirstLesson(courseId);
 
     return (
         <>
