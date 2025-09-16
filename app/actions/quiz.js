@@ -8,10 +8,12 @@ import { QuizSet } from "@/model/quizset-model";
 import { Quiz } from "@/model/quizzes-model";
 import { createQuiz, getQuizSetById } from "@/queries/quizzes";
 import { createAssessmentReport } from "@/queries/reports";
+import { dbConnection } from "@/service/dbConnection";
 import mongoose from "mongoose";
 
 export async function updateQuizSet(quizSetId, data) {
     try {
+        await dbConnection();
         // Find the quiz set by ID and update it with the new data
         const updatedQuizSet = await QuizSet.findByIdAndUpdate(quizSetId, data, { new: true });
         if (!updatedQuizSet) {
@@ -25,6 +27,8 @@ export async function updateQuizSet(quizSetId, data) {
 
 export async function addQuizToQuizSet(quizSetId, quizData) {
     try {
+        await dbConnection();
+
         const transformQuizData = {
             title: quizData.title,
             explanations: quizData.explanations,
@@ -57,6 +61,8 @@ export async function addQuizToQuizSet(quizSetId, quizData) {
 
 export async function createQuizSet(data) {
     try {
+        await dbConnection();
+
         data['slug'] = getSlug(data?.title);
         // console.log('data', data)
         const newQuizSet = new QuizSet(data);
@@ -69,6 +75,8 @@ export async function createQuizSet(data) {
 
 export async function changeQuizSetPublishState(quizSetId) {
     try {
+        await dbConnection();
+
         // Find the quiz set by ID
         const quizSet = await QuizSet.findById(quizSetId);
         if (!quizSet) {
@@ -92,6 +100,8 @@ export async function deleteQuizSet(quizSetId) {
     const session = await mongoose.startSession();
 
     try {
+        await dbConnection();
+
         return await session.withTransaction(async () => {
             // Step 1: Find the quizSet
             const quizSet = await QuizSet.findById(quizSetId).session(session);
@@ -141,6 +151,7 @@ export async function deleteQuiz(quizSetId, quizId) {
     const session = await mongoose.startSession();
 
     try {
+        await dbConnection();
         return await session.withTransaction(async () => {
             // Step 1: Verify quiz exists and get details
             const quiz = await Quiz.findById(quizId).session(session);
@@ -184,6 +195,7 @@ export async function deleteQuiz(quizSetId, quizId) {
 
 export async function updateQuiz(quizId, data) {
     try {
+        await dbConnection();
         const quiz = await Quiz.findById(quizId);
         if (!quiz) {
             throw new Error('Quiz not found');
@@ -215,6 +227,7 @@ export async function updateQuiz(quizId, data) {
 
 export async function addQuizAssessment(courseId, quizSetId, answers) {
     try {
+        await dbConnection();
         const quizSet = await getQuizSetById(quizSetId);
         const quizzes = quizSet.quizIds;
         const assessmentRecord = quizzes.map((quiz, index) => {

@@ -4,9 +4,11 @@ import { auth } from "@/auth";
 import { User } from "@/model/user-model";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { dbConnection } from "@/service/dbConnection";
 
 export async function updateUserInfo(data) {
     try {
+        await dbConnection();
         const session = await auth();
         const filter = { email: session?.user?.email };
         await User.findOneAndUpdate(filter, data);
@@ -21,6 +23,8 @@ export async function updateUserInfo(data) {
 
 export async function updateUserPassword({ loggedInUserEmail, currentPassword, newPassword }) {
     try {
+        await dbConnection();
+        
         const session = await auth();
         const userEmail = session?.user?.email;
 

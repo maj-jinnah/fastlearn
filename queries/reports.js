@@ -1,11 +1,15 @@
+import { toPlainObject } from "@/lib/convert-data";
 import { Assessment } from "@/model/assessment-model";
 import { Module } from "@/model/module.model";
 import { Report } from "@/model/report-model";
+import { dbConnection } from "@/service/dbConnection";
 import { getCourseDetailsById } from "./courses";
 
 
 export async function getAReport(filter) {
     try {
+        await dbConnection();
+
         const report = await Report.findOne(filter)
             .populate({
                 path: 'quizAssessment',
@@ -13,7 +17,7 @@ export async function getAReport(filter) {
             })
             .lean();
 
-        return report
+        return toPlainObject(report);
     } catch (error) {
         throw new Error(error)
     }
@@ -21,6 +25,8 @@ export async function getAReport(filter) {
 
 export async function createWatchReport({ userId, courseId, moduleId, lessonId }) {
     try {
+        await dbConnection();
+
         let report = await Report.findOne({
             student: userId,
             course: courseId
@@ -76,6 +82,8 @@ export async function createWatchReport({ userId, courseId, moduleId, lessonId }
 
 export async function createAssessmentReport({ userId, courseId, assessmentId }) {
     try {
+        await dbConnection();
+
         let report = await Report.findOne({ student: userId, course: courseId });
 
         if (!report) {
@@ -91,9 +99,9 @@ export async function createAssessmentReport({ userId, courseId, assessmentId })
             await report.save(); // Added missing await
         }
 
-        return report; // Return the created/updated report
+        return toPlainObject(report); // Return the created/updated report
     } catch (error) {
         console.error('Error creating assessment report:', error);
-        throw error; // Throw original error
+        throw new Error(error); // Throw original error
     }
 }

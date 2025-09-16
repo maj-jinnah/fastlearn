@@ -4,9 +4,12 @@ import { Course } from "@/model/course-model";
 import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { create } from "@/queries/modules";
+import { dbConnection } from "@/service/dbConnection";
 
 export async function createModule(data) {
     try {
+        await dbConnection();
+
         const title = data.get('title');
         const courseId = data.get('courseId');
         const slug = data.get('slug');
@@ -31,6 +34,8 @@ export async function createModule(data) {
 
 export async function reOrderModules(data) {
     try {
+        await dbConnection();
+
         await Promise.all(
             data.map(async (item) => {
                 const orderedModule = await Module.findById(item._id);
@@ -45,6 +50,8 @@ export async function reOrderModules(data) {
 
 export async function updateModule(moduleId, data) {
     try {
+        await dbConnection();
+
         await Module.findByIdAndUpdate({ _id: moduleId }, data);
     } catch (error) {
         throw new Error(error)
@@ -53,11 +60,13 @@ export async function updateModule(moduleId, data) {
 
 export async function changeModulePublishState(moduleId) {
     try {
+        await dbConnection();
+
         const foundModule = await Module.findById(moduleId);
         if (!foundModule) throw new Error("Module not found");
 
-        if(foundModule?.lessonIds){
-            if(foundModule?.lessonIds?.length < 1){
+        if (foundModule?.lessonIds) {
+            if (foundModule?.lessonIds?.length < 1) {
                 throw new Error("Please add at least one lesson");
             }
 
@@ -78,6 +87,8 @@ export async function changeModulePublishState(moduleId) {
 
 export async function deleteModule(moduleId, courseId) {
     try {
+        await dbConnection();
+
         const foundModule = await Module.findById(moduleId);
         if (!foundModule) throw new Error("Module not found");
 
@@ -102,15 +113,21 @@ export async function deleteModule(moduleId, courseId) {
 }
 
 async function validateModuleLessons(lessonIds) {
-  // Fetch lessons by IDs
-  const lessons = await Lesson.find({ _id: { $in: lessonIds } });
+    try {
+        await dbConnection();
 
-  // Check if any lesson is active
-  const hasActiveLesson = lessons.some((l) => l.active);
+        // Fetch lessons by IDs
+        const lessons = await Lesson.find({ _id: { $in: lessonIds } });
 
-  if (!hasActiveLesson) {
-    throw new Error("To publish or unpublish, you must have at least one published lesson");
-  }
+        // Check if any lesson is active
+        const hasActiveLesson = lessons.some((l) => l.active);
 
-  return true;
+        if (!hasActiveLesson) {
+            throw new Error("To publish or unpublish, you must have at least one published lesson");
+        }
+
+        return true;
+    } catch (error) {
+        throw new Error(error)
+    }
 }

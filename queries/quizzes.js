@@ -1,10 +1,13 @@
 import { toPlainObject } from "@/lib/convert-data";
 import { QuizSet } from "@/model/quizset-model";
 import { Quiz } from "@/model/quizzes-model";
+import { dbConnection } from "@/service/dbConnection";
 
 
 export async function getAllQuizSets(filter) {
     try {
+        await dbConnection();
+
         let quizSets = [];
         if (filter) {
             quizSets = await QuizSet.find({ active: true }).lean();
@@ -19,6 +22,8 @@ export async function getAllQuizSets(filter) {
 
 export async function getQuizSetById(quizSetId) {
     try {
+        await dbConnection();
+
         const quizSet = await QuizSet.findById(quizSetId)
             .populate({
                 path: 'quizIds',
@@ -33,6 +38,8 @@ export async function getQuizSetById(quizSetId) {
 
 export async function createQuiz(data) {
     try {
+        await dbConnection();
+        
         const newQuiz = new Quiz(data);
         await newQuiz.save();
         return toPlainObject(newQuiz);

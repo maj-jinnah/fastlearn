@@ -1,4 +1,5 @@
 import { updateCourse } from "@/app/actions/course";
+import { dbConnection } from "@/service/dbConnection";
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
 
@@ -11,6 +12,7 @@ cloudinary.config({
 
 export async function POST(req) {
   try {
+    await dbConnection();
     const formData = await req.formData();
     const file = formData.get("file");
     const courseId = formData.get('courseId');

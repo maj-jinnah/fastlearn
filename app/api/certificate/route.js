@@ -7,9 +7,11 @@ import { NextResponse } from "next/server";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import fs from "fs";
 import path from "path";
+import { dbConnection } from "@/service/dbConnection";
 
 export async function GET(request) {
   try {
+    await dbConnection();
     /* -----------------
      * Configurations
      *-------------------*/

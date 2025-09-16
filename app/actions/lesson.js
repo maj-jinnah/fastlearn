@@ -3,58 +3,67 @@
 import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { create } from "@/queries/lessons";
+import { dbConnection } from "@/service/dbConnection";
 
 
-export async function createLesson(formData){
-    try {
-        const title = formData.get('title');
-        const slug = formData.get('slug');
-        const moduleId = formData.get('moduleId');
-        const order = formData.get('order');
+export async function createLesson(formData) {
+  try {
+    await dbConnection();
 
-        const createdLesson = await create({title, slug, moduleId, order});
+    const title = formData.get('title');
+    const slug = formData.get('slug');
+    const moduleId = formData.get('moduleId');
+    const order = formData.get('order');
 
-        const lessonModule = await Module.findById(moduleId);
-        lessonModule.lessonIds.push(createdLesson?._id);
-        await lessonModule.save();
+    const createdLesson = await create({ title, slug, moduleId, order });
 
-        return createdLesson;
+    const lessonModule = await Module.findById(moduleId);
+    lessonModule.lessonIds.push(createdLesson?._id);
+    await lessonModule.save();
 
-    } catch (error) {
-        throw new Error(error)
-    }
+    return createdLesson;
+
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
-export async function reOrderLesson(data){
-    try {
-        await Promise.all(
-            data.map(async (item) => {
-                const orderedLesson = await Lesson.findById(item.id);
-                orderedLesson.order = item.position;
-                await orderedLesson.save();
-            })
-        )
-    } catch (error) {
-        throw new Error(error)
-    }
+export async function reOrderLesson(data) {
+  try {
+    await dbConnection();
+
+    await Promise.all(
+      data.map(async (item) => {
+        const orderedLesson = await Lesson.findById(item.id);
+        orderedLesson.order = item.position;
+        await orderedLesson.save();
+      })
+    )
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
-export async function updateLesson(lessonId, data){
-    try {
-        await Lesson.findByIdAndUpdate({ _id: lessonId }, data);
-    } catch (error) {
-        throw new Error(error)
-    }
+export async function updateLesson(lessonId, data) {
+  try {
+    await dbConnection();
+
+    await Lesson.findByIdAndUpdate({ _id: lessonId }, data);
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 export async function changeLessonPublishState(LessonId) {
   try {
+    await dbConnection();
+
     const lesson = await Lesson.findById(LessonId);
     if (!lesson) throw new Error("Lesson not found");
 
-    if(!lesson?.description) throw new Error("Description is required");
-    if(!lesson?.video_url) throw new Error("Video URL is required");
-    if(!lesson?.duration) throw new Error("Video duration is required");
+    if (!lesson?.description) throw new Error("Description is required");
+    if (!lesson?.video_url) throw new Error("Video URL is required");
+    if (!lesson?.duration) throw new Error("Video duration is required");
 
     const updatedLesson = await Lesson.findByIdAndUpdate(
       LessonId,
@@ -70,6 +79,8 @@ export async function changeLessonPublishState(LessonId) {
 
 export async function deleteLesson(lessonId, moduleId) {
   try {
+    await dbConnection();
+    
     const lesson = await Lesson.findByIdAndDelete(lessonId);
     if (!lesson) throw new Error("Lesson not found");
 

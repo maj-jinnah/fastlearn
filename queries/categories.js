@@ -1,17 +1,30 @@
 import { toPlainObject } from "@/lib/convert-data";
 import { Category } from "@/model/category-model";
+import { dbConnection } from "@/service/dbConnection";
 
 
 export async function getCategories() {
-    const categories = await Category.find({})
-        .lean();
+    try {
+        await dbConnection();
+        
+        const categories = await Category.find({})
+            .lean();
 
-    return toPlainObject(categories);
+        return toPlainObject(categories);
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 
 export async function getCategoryById(categoryId) {
-    const category = await Category.findById(categoryId)
-        .lean();
+    try {
+        await dbConnection();
 
-    return toPlainObject(category);
+        const category = await Category.findById(categoryId)
+            .lean();
+
+        return toPlainObject(category);
+    } catch (error) {
+        throw new Error(error)
+    }
 }

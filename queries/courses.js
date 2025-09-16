@@ -10,67 +10,79 @@ import { getEnrollmentsForCourse } from "./enrollments";
 import { getTestimonialsForCourse } from "./testimonials";
 
 export async function getCourseList() {
-    const courses = await Course.find({ active: true })
-        .select('title description thumbnail price active category instructor modules testimonials')
-        .populate({
-            path: 'category',
-            select: 'title description thumbnail -_id',
-            model: Category,
-        })
-        .populate({
-            path: 'instructor',
-            select: 'firstName email profilePicture -_id',
-            model: User,
-        })
-        .populate({
-            path: 'modules',
-            select: 'title description status slug course active lessonIds -_id',
-            model: Module,
-        })
-        .populate({
-            path: 'testimonials',
-            select: 'content user courseId rating -_id',
-            model: Testimonial,
-        }).lean();
+    try {
+        await dbConnection();
+        const courses = await Course.find({ active: true })
+            .select('title description thumbnail price active category instructor modules testimonials')
+            .populate({
+                path: 'category',
+                select: 'title description thumbnail -_id',
+                model: Category,
+            })
+            .populate({
+                path: 'instructor',
+                select: 'firstName email profilePicture -_id',
+                model: User,
+            })
+            .populate({
+                path: 'modules',
+                select: 'title description status slug course active lessonIds -_id',
+                model: Module,
+            })
+            .populate({
+                path: 'testimonials',
+                select: 'content user courseId rating -_id',
+                model: Testimonial,
+            }).lean();
 
-    return toPlainObject(courses);
+        return toPlainObject(courses);
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 
 export async function getCourseDetailsById(id) {
+    try {
+        await dbConnection();
 
-    const course = await Course.findById(id)
-        .populate({
-            path: 'category',
-            model: Category,
-        })
-        .populate({
-            path: 'instructor',
-            select: ' -password',
-            model: User,
-        })
-        .populate({
-            path: 'modules',
-            model: Module,
-            populate: {
-                path: 'lessonIds',
-                model: Lesson,
-            },
-        })
-        .populate({
-            path: 'testimonials',
-            model: Testimonial,
-            populate: {
-                path: 'user',
+        const course = await Course.findById(id)
+            .populate({
+                path: 'category',
+                model: Category,
+            })
+            .populate({
+                path: 'instructor',
+                select: ' -password',
                 model: User,
-                select: 'firstName lastName email profilePicture ',
-            },
-        })
-        .lean();
+            })
+            .populate({
+                path: 'modules',
+                model: Module,
+                populate: {
+                    path: 'lessonIds',
+                    model: Lesson,
+                },
+            })
+            .populate({
+                path: 'testimonials',
+                model: Testimonial,
+                populate: {
+                    path: 'user',
+                    model: User,
+                    select: 'firstName lastName email profilePicture ',
+                },
+            })
+            .lean();
 
-    return toPlainObject(course);
+        return toPlainObject(course);
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 
 export async function getCourseDetailsByInstructor(instructorId, expand) {
+    await dbConnection();
+
     const publishedCourses = await Course.find({ instructor: instructorId, active: true }).lean();
 
     const enrollments = await Promise.all(
@@ -120,6 +132,8 @@ export async function getCourseDetailsByInstructor(instructorId, expand) {
 
 export async function create(courseData) {
     try {
+        await dbConnection();
+
         const course = await Course.create(courseData);
         return JSON.parse(JSON.stringify(course));
     } catch (error) {
@@ -129,6 +143,8 @@ export async function create(courseData) {
 
 export async function getCourseDetailsByIdForWatch(id) {
     try {
+        await dbConnection();
+
         const course = await Course.findById(id)
             // .populate({
             //     path: 'category',
@@ -166,20 +182,27 @@ export async function getCourseDetailsByIdForWatch(id) {
     }
 }
 
-export function courseLessons(courseId) {
-    return Course.findById(courseId)
-        .select('modules title')
-        .populate({
-            path: 'modules',
-            model: Module,
-            select: 'lessonIds title',
-            populate: {
-                path: 'lessonIds',
-                model: Lesson,
-                match: { active: true },
-            },
-        })
-        .lean();
+export async function courseLessons(courseId) {
+    try {
+        await dbConnection();
+
+        const result = await Course.findById(courseId)
+            .select('modules title')
+            .populate({
+                path: 'modules',
+                model: Module,
+                select: 'lessonIds title',
+                populate: {
+                    path: 'lessonIds',
+                    model: Lesson,
+                    match: { active: true },
+                },
+            })
+            .lean();
+        return toPlainObject(result);
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 
 

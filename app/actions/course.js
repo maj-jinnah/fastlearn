@@ -1,15 +1,17 @@
 'use server';
 
-import { toPlainObject } from "@/lib/convert-data";
 import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Course } from "@/model/course-model";
 import { Lesson } from "@/model/lesson.model";
 import { Module } from "@/model/module.model";
 import { create } from "@/queries/courses";
+import { dbConnection } from "@/service/dbConnection";
 import mongoose from "mongoose";
 
 export async function createCourse(data) {
     try {
+        await dbConnection();
+
         const loggedInUser = await getLoggedInUser();
         data['instructor'] = loggedInUser?._id;
         const course = await create(data);
@@ -21,6 +23,8 @@ export async function createCourse(data) {
 
 export async function updateCourse(courseId, dataToUpdate) {
     try {
+        await dbConnection();
+
         // console.log('data to update', dataToUpdate)
         await Course.findByIdAndUpdate({ _id: courseId }, dataToUpdate);
     } catch (error) {
@@ -30,21 +34,23 @@ export async function updateCourse(courseId, dataToUpdate) {
 
 export async function changeCoursePublishState(courseId) {
     try {
+        await dbConnection();
+
         const foundCourse = await Course.findById(courseId);
         if (!foundCourse) throw new Error("Course not found");
         // console.log("foundCourse", foundCourse)
 
-        if(!foundCourse?.thumbnail){
+        if (!foundCourse?.thumbnail) {
             throw new Error("Please upload a thumbnail");
         }
-        if(foundCourse?.price < 498){
+        if (foundCourse?.price < 498) {
             throw new Error("Price must be at least 499 or higher");
         }
-        if(!foundCourse?.category){
-                throw new Error("You need to select a category for your course");
+        if (!foundCourse?.category) {
+            throw new Error("You need to select a category for your course");
         }
-        if(foundCourse?.modules){
-            if(foundCourse?.modules?.length < 1){
+        if (foundCourse?.modules) {
+            if (foundCourse?.modules?.length < 1) {
                 throw new Error("Please add at least one module");
             }
             await validateCourseModules(foundCourse?.modules)
@@ -65,6 +71,8 @@ export async function deleteCourse(courseId) {
     const session = await mongoose.startSession();
 
     try {
+        await dbConnection();
+
         session.startTransaction();
 
         // 1. Find the course
@@ -126,14 +134,16 @@ export async function deleteCourse(courseId) {
 
 export async function quizSetForCourse(courseId, quizSetId) {
     try {
+        await dbConnection();
+
         const result = await Course.findByIdAndUpdate(
             courseId,
-            { 
+            {
                 quizSet: quizSetId // Direct replacement
             },
-            { 
+            {
                 new: true,
-                runValidators: true 
+                runValidators: true
             }
         );
 
@@ -146,15 +156,21 @@ export async function quizSetForCourse(courseId, quizSetId) {
 }
 
 async function validateCourseModules(moduleIds) {
-  // Get all modules by IDs
-  const modules = await Module.find({ _id: { $in: moduleIds } });
+    try {
+        await dbConnection();
 
-  // Check if any module is active
-  const hasActiveModule = modules.some((m) => m.active);
+        // Get all modules by IDs
+        const modules = await Module.find({ _id: { $in: moduleIds } });
 
-  if (!hasActiveModule) {
-    throw new Error("To publish or unpublish, you must have at least one published module");
-  }
+        // Check if any module is active
+        const hasActiveModule = modules.some((m) => m.active);
 
-  return true;
+        if (!hasActiveModule) {
+            throw new Error("To publish or unpublish, you must have at least one published module");
+        }
+
+        return true;
+    } catch (error) {
+        throw new Error(error)
+    }
 }

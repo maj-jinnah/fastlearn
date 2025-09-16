@@ -3,6 +3,7 @@
 import { getLoggedInUser } from "@/lib/loggedin-user";
 import { Course } from "@/model/course-model";
 import { Testimonial } from "@/model/testimonial-model";
+import { dbConnection } from "@/service/dbConnection";
 
 export async function createTestimonial(data) {
     try {
@@ -10,6 +11,7 @@ export async function createTestimonial(data) {
             throw new Error("All fields are required!");
         }
         
+        await dbConnection();
         const loggedInUser = await getLoggedInUser();
         if (!loggedInUser) {
             throw new Error("You are not logged in!");

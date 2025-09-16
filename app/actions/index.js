@@ -24,9 +24,12 @@
 'use server';
 
 import { signIn } from "@/auth";
+import { dbConnection } from "@/service/dbConnection";
 
 export async function credentialsLogin(formData) {
     try {
+        await dbConnection();
+
         const response = await signIn("credentials", {
             email: formData.get("email"),
             password: formData.get("password"),

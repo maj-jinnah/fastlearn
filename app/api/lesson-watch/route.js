@@ -3,6 +3,7 @@ import { Watch } from "@/model/watch-model";
 import { getLesson } from "@/queries/lessons";
 import { getModuleBySlug } from "@/queries/modules";
 import { createWatchReport } from "@/queries/reports";
+import { dbConnection } from "@/service/dbConnection";
 import { NextResponse } from "next/server";
 
 async function updateReport(userId, courseId, moduleId, lessonId) {
@@ -17,6 +18,7 @@ export async function POST(request) {
     try {
         const { courseId, lessonId, moduleSlug, state, lastTime } = await request.json();
 
+        await dbConnection();
         const loggedInUser = await getLoggedInUser();
         const lesson = await getLesson(lessonId);
         const foundModule = await getModuleBySlug(moduleSlug);

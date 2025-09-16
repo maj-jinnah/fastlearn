@@ -4,10 +4,13 @@ import { formatAmountForStripe } from '@/lib/stripe-helpers';
 import { headers } from 'next/headers';
 import { stripe } from '../../lib/stripe';
 import { getCourseDetailsById } from '@/queries/courses';
+import { dbConnection } from '@/service/dbConnection';
 
 const CURRENCY = 'bdt';
 
 export async function createCheckoutSession(data) {
+    await dbConnection();
+
     const ui_mode = 'hosted';
     const headersList = await headers();
     const origin = headersList.get('origin');
@@ -50,6 +53,7 @@ export async function createCheckoutSession(data) {
 }
 
 export async function createPaymentIntent(data) {
+    await dbConnection();
     const origin = headers().get('origin');
 
     const paymentIntent = await stripe.paymentIntents.create({
