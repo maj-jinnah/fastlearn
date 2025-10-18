@@ -1,25 +1,54 @@
 import { cn } from "@/lib/utils";
-import {
-    Facebook,
-    Instagram,
-    Linkedin,
-    Mail,
-    MapPin,
-    Phone,
-    Twitter,
-} from "lucide-react";
+import { Facebook, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "./logo";
 
 export function SiteFooter({ className }) {
+    function formatCategory(str) {
+        // Step 1: normalize string (lowercase + replace spaces)
+        let formatted = str
+            .trim()
+            .toLowerCase()
+            .replace(/\s*&\s*/g, "-&-") // replace ' & ' with '-&-'
+            .replace(/\s+/g, "-"); // replace spaces with '-'
+
+        // Step 2: encode '&' → '%26', and then double-encode → '%2526'
+        formatted = encodeURIComponent(encodeURIComponent(formatted));
+
+        return formatted;
+    }
+
     return (
         <footer
-            className={cn(className) + "bg-gray-50 border-t border-gray-200 mt-10"}
+            className={
+                cn(className) + "bg-gray-50 border-t border-gray-200 mt-10"
+            }
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-3">
                     {/* About Section */}
                     <div className="space-y-4">
-                        <Logo />
+                        <div className="flex justify-left items-center gap-3">
+                            <Logo />
+                            <div className={"flex flex-col"}>
+                                <div className="text-center">
+                                    <div className="flex items-center justify-center space-x-1">
+                                        <span className="text-3xl font-bold text-blue-800 relative">
+                                            F
+                                        </span>
+                                        <span className="text-3xl font-bold text-blue-800">
+                                            ast
+                                        </span>
+                                        <span className="text-3xl font-bold text-green-600">
+                                            Learn
+                                        </span>
+                                    </div>
+
+                                    <p className="tracking-[0.35em] text-blue-800 text-lg font-medium">
+                                        ACADEMY
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <p className="text-gray-600 text-sm leading-relaxed">
                             Empowering learners worldwide with cutting-edge
                             courses and expert instruction. Transform your
@@ -30,7 +59,7 @@ export function SiteFooter({ className }) {
                     {/* Quick Links */}
                     <div className="space-y-4">
                         <h4 className="text-lg font-semibold text-gray-900">
-                            Popular Courses
+                            Popular Categories
                         </h4>
                         <ul className="space-y-2">
                             {[
@@ -41,7 +70,7 @@ export function SiteFooter({ className }) {
                             ].map((course) => (
                                 <li key={course}>
                                     <a
-                                        href="#"
+                                        href={`/courses?category=${formatCategory(course)}`}
                                         className="text-gray-600 hover:text-emerald-600 transition-colors duration-200 text-sm"
                                     >
                                         {course}
@@ -119,24 +148,19 @@ export function SiteFooter({ className }) {
                             <div className="flex space-x-3">
                                 {[
                                     {
-                                        icon: Facebook,
-                                        href: "#",
-                                        label: "Facebook",
-                                    },
-                                    {
-                                        icon: Twitter,
-                                        href: "#",
-                                        label: "Twitter",
+                                        icon: Github,
+                                        href: "https://github.com/maj-jinnah",
+                                        label: "Github",
                                     },
                                     {
                                         icon: Linkedin,
-                                        href: "#",
+                                        href: "https://www.linkedin.com/in/maj-jinnah/",
                                         label: "LinkedIn",
                                     },
                                     {
-                                        icon: Instagram,
-                                        href: "#",
-                                        label: "Instagram",
+                                        icon: Facebook,
+                                        href: "https://www.facebook.com/maj.jinnah",
+                                        label: "Facebook",
                                     },
                                 ].map(({ icon: Icon, href, label }) => (
                                     <a

@@ -18,9 +18,24 @@ const HomePage = async () => {
   // .slice(0, 4);
   const latestCourses = courses.slice(-4).reverse();
 
+  function formatCategory(str) {
+    // Step 1: normalize string (lowercase + replace spaces)
+    let formatted = str
+      .trim()
+      .toLowerCase()
+      // .replace(/\s*&\s*/g, "-&-") // replace ' & ' with '-&-'
+      // .replace(/\s+/g, "-"); // replace spaces with '-'
+
+    // Step 2: encode '&' → '%26', and then double-encode → '%2526'
+    formatted = encodeURIComponent(encodeURIComponent(formatted));
+
+    return formatted;
+  }
+
+
   return (
     <>
-      <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32 grainy">
+      <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32 grainy px-2">
         <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center relative isolate">
           <div
             aria-hidden="true"
@@ -61,7 +76,7 @@ const HomePage = async () => {
       {/* Categories Section */}
       <section
         id="categories"
-        className="container space-y-6  py-8  md:py-12 lg:py-24"
+        className="container space-y-6  py-8  md:py-12 lg:py-24 px-2"
       >
         <div className="flex items-center justify-between">
           <SectionTitle>Categories</SectionTitle>
@@ -77,7 +92,8 @@ const HomePage = async () => {
           {categories.map((category) => {
             return (
               <Link
-                href={`/courses?category=${category?.slug}`}
+              // ${formatCategory(category?.slug)}
+                href={`/courses?category=${formatCategory(category?.slug)}`}
                 key={category?._id}
                 className="relative overflow-hidden rounded-lg border bg-background p-2 hover:scale-105 transition-all duration-500 ease-in-out"
               >
@@ -97,7 +113,7 @@ const HomePage = async () => {
       </section>
 
       {/* Courses */}
-      <section  className="container space-y-6 md:py-12 lg:py-24">
+      <section className="container space-y-6 md:py-12 lg:py-24 px-2">
         <div className="flex items-center justify-between">
           <SectionTitle>Courses</SectionTitle>
           <Link

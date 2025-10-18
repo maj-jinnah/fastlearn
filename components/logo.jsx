@@ -6,8 +6,8 @@ import logo from "../public/assets/brain-generator-idea.svg";
 export const Logo = ({ hidden }) => {
     return (
         <Link href="/" className="flex justify-center items-center gap-3">
-            <Image className={cn( "max-w-[75px]")} src={logo} alt="logo" />
-            <div className={hidden ? "hidden" : "flex flex-col"}>
+            <Image className={cn( "max-w-[55px]")} src={logo} alt="logo" />
+            {/* <div className={hidden ? "hidden" : "flex flex-col"}>
                 <div className="text-center">
                     <div className="flex items-center justify-center space-x-1">
                         <span className="text-4xl font-bold text-blue-800 relative">
@@ -25,7 +25,7 @@ export const Logo = ({ hidden }) => {
                         ACADEMY
                     </p>
                 </div>
-            </div>
+            </div> */}
         </Link>
     );
 };
